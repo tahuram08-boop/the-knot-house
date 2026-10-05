@@ -1,0 +1,3784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Cart | The Knot House</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   THE KNOT HOUSE - CART PAGE
+   ========================================================= */
+
+:root {
+    --pink: #a96771;
+    --dark-pink: #8d555e;
+    --light-pink: #f8e8e7;
+    --soft-pink: #f3d8d9;
+
+    --cream: #fffaf7;
+    --background: #faf5f2;
+
+    --brown: #513d3d;
+    --brown-light: #806969;
+
+    --white: #ffffff;
+
+    --border: #eadbd7;
+
+    --green: #67866e;
+    --green-light: #edf5ee;
+
+    --red: #b85c67;
+
+    --shadow:
+        0 10px 30px rgba(81, 61, 61, 0.07);
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+    background: var(--background);
+    color: var(--brown);
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.container {
+    width: min(1180px, calc(100% - 40px));
+    margin: auto;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+
+    z-index: 5000;
+
+    background: rgba(255, 250, 247, 0.96);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    border-bottom: 1px solid transparent;
+
+    transition: 0.3s ease;
+}
+
+header.scrolled {
+    border-bottom-color: var(--border);
+
+    box-shadow:
+        0 8px 25px rgba(81, 61, 61, 0.06);
+}
+
+.navbar {
+    width: min(1180px, calc(100% - 40px));
+
+    min-height: 80px;
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.logo {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 2px solid var(--soft-pink);
+
+    background: white;
+
+    transition: 0.3s ease;
+}
+
+.logo:hover img {
+    transform: rotate(-6deg);
+}
+
+.logo span {
+    font-family: "Playfair Display", serif;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.nav-links {
+    display: flex;
+    align-items: center;
+
+    gap: 22px;
+
+    list-style: none;
+}
+
+.nav-links a {
+    position: relative;
+
+    color: var(--brown-light);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    padding: 7px 0;
+
+    transition: 0.3s ease;
+}
+
+.nav-links a::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 0;
+    height: 2px;
+
+    background: var(--pink);
+
+    border-radius: 10px;
+
+    transition: 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--pink);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+    width: 100%;
+}
+
+
+/* =========================================================
+   CART BUTTON
+   ========================================================= */
+
+.header-right {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+}
+
+.cart-link {
+    position: relative;
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--light-pink);
+
+    color: var(--pink);
+
+    font-size: 19px;
+
+    transition: 0.3s ease;
+}
+
+.cart-link:hover {
+    background: var(--soft-pink);
+
+    transform: translateY(-2px);
+}
+
+.cart-count {
+    position: absolute;
+
+    top: -3px;
+    right: -3px;
+
+    min-width: 19px;
+    height: 19px;
+
+    padding: 0 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background: var(--pink);
+
+    color: white;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    border: 2px solid var(--cream);
+}
+
+
+/* =========================================================
+   MOBILE MENU BUTTON
+   ========================================================= */
+
+.menu-btn {
+    display: none;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--light-pink);
+
+    color: var(--pink);
+
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   PAGE TOP
+   ========================================================= */
+
+.page-top {
+    padding-top: 125px;
+    padding-bottom: 42px;
+
+    background:
+        radial-gradient(
+            circle at 8% 25%,
+            rgba(243, 216, 217, 0.65),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 92% 15%,
+            rgba(248, 232, 231, 0.8),
+            transparent 28%
+        ),
+
+        var(--cream);
+
+    border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 16px;
+
+    color: var(--brown-light);
+
+    font-size: 10px;
+}
+
+.breadcrumb a:hover {
+    color: var(--pink);
+}
+
+.breadcrumb span {
+    color: #c4aaa7;
+}
+
+.page-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+.page-title h1 {
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(40px, 5vw, 58px);
+
+    line-height: 1;
+
+    letter-spacing: -1.5px;
+}
+
+.page-title h1 span {
+    color: var(--pink);
+
+    font-style: italic;
+}
+
+.page-title p {
+    max-width: 410px;
+
+    color: var(--brown-light);
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.cart-section {
+    padding: 35px 0 80px;
+}
+
+.cart-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.55fr)
+        minmax(320px, 0.8fr);
+
+    gap: 24px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 18px;
+
+    box-shadow: var(--shadow);
+}
+
+
+/* =========================================================
+   CART CARD
+   ========================================================= */
+
+.cart-card {
+    overflow: hidden;
+}
+
+.cart-card-header {
+    min-height: 75px;
+
+    padding: 18px 23px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-title {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.cart-title-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: var(--light-pink);
+
+    font-size: 17px;
+}
+
+.cart-title h2 {
+    font-family: "Playfair Display", serif;
+
+    font-size: 22px;
+}
+
+.cart-items-text {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--brown-light);
+
+    font-size: 9px;
+}
+
+.clear-cart {
+    border: none;
+
+    background: transparent;
+
+    color: var(--red);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    transition: 0.2s ease;
+}
+
+.clear-cart:hover {
+    color: #8e3d47;
+}
+
+
+/* =========================================================
+   CART ITEM
+   ========================================================= */
+
+.cart-item {
+    padding: 20px 23px;
+
+    display: grid;
+
+    grid-template-columns:
+        105px
+        minmax(0, 1fr)
+        125px;
+
+    gap: 18px;
+
+    align-items: center;
+
+    border-bottom: 1px solid var(--border);
+
+    transition: 0.25s ease;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item:hover {
+    background: #fffdfc;
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
+
+.product-image {
+    width: 105px;
+    height: 105px;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    background: var(--light-pink);
+
+    border: 1px solid var(--border);
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: 0.4s ease;
+}
+
+.cart-item:hover .product-image img {
+    transform: scale(1.06);
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+   ========================================================= */
+
+.product-category {
+    display: inline-block;
+
+    margin-bottom: 5px;
+
+    color: var(--pink);
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.3px;
+
+    text-transform: uppercase;
+}
+
+.product-details h3 {
+    margin-bottom: 5px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 19px;
+}
+
+.product-description {
+    max-width: 440px;
+
+    margin-bottom: 8px;
+
+    color: var(--brown-light);
+
+    font-size: 10px;
+
+    line-height: 1.55;
+}
+
+.product-price {
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ITEM ACTIONS
+   ========================================================= */
+
+.item-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 12px;
+}
+
+.quantity-box {
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    background: var(--cream);
+}
+
+.quantity-btn {
+    width: 32px;
+    height: 34px;
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--pink);
+
+    font-size: 17px;
+
+    transition: 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background: var(--light-pink);
+}
+
+.quantity-value {
+    width: 30px;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+.edit-btn {
+    border: none;
+
+    background: transparent;
+
+    color: var(--pink);
+
+    font-size: 9px;
+
+    font-weight: 700;
+}
+
+.edit-btn:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   ITEM RIGHT
+   ========================================================= */
+
+.item-right {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 16px;
+}
+
+.item-total {
+    color: var(--pink);
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+.remove-btn {
+    border: none;
+
+    background: transparent;
+
+    color: #9b8585;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.remove-btn:hover {
+    color: var(--red);
+}
+
+
+/* =========================================================
+   ADD MORE CARD
+   ========================================================= */
+
+.add-more {
+    margin-top: 18px;
+
+    padding: 18px 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border: 1px dashed var(--border);
+
+    border-radius: 16px;
+
+    background: white;
+}
+
+.add-more-left {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.add-more-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: var(--light-pink);
+
+    color: var(--pink);
+
+    font-size: 18px;
+}
+
+.add-more strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    font-size: 12px;
+}
+
+.add-more small {
+    color: var(--brown-light);
+
+    font-size: 9px;
+}
+
+.shop-more-btn {
+    padding: 10px 16px;
+
+    border-radius: 9px;
+
+    background: var(--pink);
+
+    color: white;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    transition: 0.3s ease;
+}
+
+.shop-more-btn:hover {
+    background: var(--dark-pink);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   LEFT INFO CARDS
+   ========================================================= */
+
+.info-card {
+    margin-top: 18px;
+
+    padding: 20px 22px;
+}
+
+.info-title {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+}
+
+.info-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: var(--light-pink);
+
+    font-size: 15px;
+}
+
+.info-title h3 {
+    font-family: "Playfair Display", serif;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   DELIVERY BOX
+   ========================================================= */
+
+.delivery-box {
+    padding: 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: #fffdfc;
+}
+
+.delivery-icon {
+    width: 41px;
+    height: 41px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--green-light);
+
+    font-size: 17px;
+}
+
+.delivery-text {
+    flex: 1;
+}
+
+.delivery-text strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    font-size: 11px;
+}
+
+.delivery-text span {
+    color: var(--brown-light);
+
+    font-size: 9px;
+}
+
+.delivery-edit {
+    border: none;
+
+    background: transparent;
+
+    color: var(--pink);
+
+    font-size: 9px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   COUPON
+   ========================================================= */
+
+.coupon-form {
+    display: flex;
+
+    gap: 8px;
+}
+
+.coupon-input {
+    flex: 1;
+
+    height: 43px;
+
+    padding: 0 13px;
+
+    outline: none;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    background: var(--cream);
+
+    color: var(--brown);
+
+    font-size: 10px;
+
+    transition: 0.25s ease;
+}
+
+.coupon-input:focus {
+    border-color: var(--pink);
+
+    background: white;
+}
+
+.apply-coupon {
+    min-width: 78px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: var(--pink);
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+.apply-coupon:hover {
+    background: var(--dark-pink);
+}
+
+.coupon-message {
+    min-height: 16px;
+
+    margin-top: 8px;
+
+    color: var(--green);
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
+
+.summary-column {
+    position: sticky;
+
+    top: 100px;
+}
+
+.summary-card {
+    overflow: hidden;
+}
+
+.summary-header {
+    padding: 21px 23px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.summary-header h2 {
+    font-family: "Playfair Display", serif;
+
+    font-size: 23px;
+}
+
+.summary-body {
+    padding: 20px 23px;
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 0;
+
+    color: var(--brown-light);
+
+    font-size: 11px;
+}
+
+.summary-row strong {
+    color: var(--brown);
+}
+
+.discount-row strong {
+    color: var(--green);
+}
+
+.divider {
+    height: 1px;
+
+    margin: 10px 0;
+
+    background: var(--border);
+}
+
+
+/* =========================================================
+   FREE SHIPPING
+   ========================================================= */
+
+.shipping-box {
+    margin: 14px 0;
+
+    padding: 13px;
+
+    border-radius: 12px;
+
+    background: var(--green-light);
+
+    border: 1px solid #dceade;
+}
+
+.shipping-text {
+    margin-bottom: 8px;
+
+    color: var(--green);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    line-height: 1.5;
+}
+
+.progress {
+    width: 100%;
+    height: 5px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #dbe7dc;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: var(--green);
+
+    transition: width 0.5s ease;
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+.total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding-top: 4px;
+}
+
+.total-row span:first-child {
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+.total-price {
+    color: var(--pink);
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 28px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CHECKOUT
+   ========================================================= */
+
+.checkout-btn {
+    width: 100%;
+
+    height: 52px;
+
+    margin-top: 18px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--pink),
+            var(--dark-pink)
+        );
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 10px 24px rgba(141, 85, 94, 0.2);
+
+    transition: 0.3s ease;
+}
+
+.checkout-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(141, 85, 94, 0.25);
+}
+
+.checkout-btn:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+.secure {
+    margin-top: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    color: var(--brown-light);
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   TRUST FEATURES
+   ========================================================= */
+
+.trust-features {
+    margin-top: 18px;
+
+    padding-top: 17px;
+
+    border-top: 1px solid var(--border);
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 12px;
+}
+
+.trust-item:last-child {
+    margin-bottom: 0;
+}
+
+.trust-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: var(--light-pink);
+
+    font-size: 13px;
+}
+
+.trust-item strong {
+    display: block;
+
+    margin-bottom: 2px;
+
+    font-size: 9px;
+}
+
+.trust-item span {
+    color: var(--brown-light);
+
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   EMPTY CART
+   ========================================================= */
+
+.empty-cart {
+    padding: 70px 25px;
+
+    text-align: center;
+}
+
+.empty-cart-icon {
+    width: 95px;
+    height: 95px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--light-pink);
+
+    font-size: 40px;
+}
+
+.empty-cart h2 {
+    margin-bottom: 8px;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 29px;
+}
+
+.empty-cart p {
+    max-width: 420px;
+
+    margin: 0 auto 22px;
+
+    color: var(--brown-light);
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+.empty-cart a {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 20px;
+
+    border-radius: 9px;
+
+    background: var(--pink);
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    padding: 55px 0 22px;
+
+    background: #4b3838;
+
+    color: white;
+}
+
+.footer-grid {
+    display: grid;
+
+    grid-template-columns:
+        1.4fr
+        1fr
+        1fr
+        1fr;
+
+    gap: 40px;
+
+    padding-bottom: 35px;
+}
+
+.footer-brand .logo {
+    margin-bottom: 15px;
+}
+
+.footer-brand .logo span {
+    color: white;
+}
+
+.footer-brand p {
+    max-width: 320px;
+
+    color: rgba(255,255,255,.6);
+
+    font-size: 10px;
+
+    line-height: 1.8;
+}
+
+.footer-column h3 {
+    margin-bottom: 14px;
+
+    font-size: 12px;
+}
+
+.footer-column ul {
+    list-style: none;
+}
+
+.footer-column li {
+    margin-bottom: 9px;
+}
+
+.footer-column a,
+.footer-column span {
+    color: rgba(255,255,255,.6);
+
+    font-size: 10px;
+
+    transition: 0.2s ease;
+}
+
+.footer-column a:hover {
+    color: white;
+}
+
+.footer-bottom {
+    padding-top: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.footer-bottom p {
+    color: rgba(255,255,255,.45);
+
+    font-size: 8px;
+}
+
+.socials {
+    display: flex;
+    gap: 7px;
+}
+
+.social {
+    width: 31px;
+    height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    font-size: 11px;
+
+    transition: 0.3s ease;
+}
+
+.social:hover {
+    background: var(--pink);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   BACK TO TOP
+   ========================================================= */
+
+.back-top {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    z-index: 4000;
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--pink);
+
+    color: white;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(10px);
+
+    transition: 0.3s ease;
+}
+
+.back-top.show {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+}
+
+.back-top:hover {
+    background: var(--dark-pink);
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 25px;
+
+    z-index: 9999;
+
+    padding: 13px 18px;
+
+    max-width: 360px;
+
+    border-radius: 10px;
+
+    background: #4b3838;
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.2);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+        translate(-50%, 20px);
+
+    transition: 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+/* =========================================================
+   MOBILE CHECKOUT
+   ========================================================= */
+
+.mobile-checkout {
+    display: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE 1000px
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .nav-links {
+        gap: 14px;
+    }
+
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-column {
+        position: static;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 900px
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .navbar {
+        min-height: 72px;
+    }
+
+    .menu-btn {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-links {
+        position: fixed;
+
+        top: 72px;
+        left: 0;
+
+        width: 100%;
+
+        padding: 18px;
+
+        flex-direction: column;
+
+        gap: 4px;
+
+        background: rgba(255,250,247,.98);
+
+        backdrop-filter: blur(15px);
+
+        border-bottom: 1px solid var(--border);
+
+        box-shadow:
+            0 15px 30px rgba(81,61,61,.08);
+
+        opacity: 0;
+        visibility: hidden;
+
+        transform: translateY(-10px);
+
+        transition: 0.3s ease;
+    }
+
+    .nav-links.open {
+        opacity: 1;
+        visibility: visible;
+
+        transform: translateY(0);
+    }
+
+    .nav-links li,
+    .nav-links a {
+        width: 100%;
+    }
+
+    .nav-links a {
+        display: block;
+
+        padding: 12px;
+
+        text-align: center;
+
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: var(--light-pink);
+    }
+
+    .nav-links a::after {
+        display: none;
+    }
+
+    .page-title {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 650px
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .container,
+    .navbar {
+        width: calc(100% - 28px);
+    }
+
+    .logo img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .logo span {
+        font-size: 18px;
+    }
+
+    .cart-link,
+    .menu-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .page-top {
+        padding-top: 108px;
+        padding-bottom: 30px;
+    }
+
+    .page-title h1 {
+        font-size: 43px;
+    }
+
+    .cart-section {
+        padding: 20px 0 95px;
+    }
+
+    .cart-card-header {
+        padding: 16px;
+    }
+
+    .cart-item {
+        grid-template-columns:
+            82px
+            minmax(0, 1fr);
+
+        padding: 17px;
+
+        gap: 13px;
+    }
+
+    .product-image {
+        width: 82px;
+        height: 82px;
+    }
+
+    .product-details h3 {
+        font-size: 17px;
+    }
+
+    .product-description {
+        font-size: 9px;
+    }
+
+    .item-right {
+        grid-column: 1 / -1;
+
+        flex-direction: row;
+
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .add-more {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .shop-more-btn {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    .info-card {
+        padding: 18px;
+    }
+
+    .coupon-form {
+        flex-direction: column;
+    }
+
+    .coupon-input {
+        width: 100%;
+    }
+
+    .apply-coupon {
+        height: 42px;
+    }
+
+    .summary-column {
+        display: none;
+    }
+
+    .mobile-checkout {
+        position: fixed;
+
+        left: 0;
+        bottom: 0;
+
+        z-index: 4500;
+
+        width: 100%;
+
+        padding: 10px 14px;
+
+        padding-bottom:
+            calc(
+                10px +
+                env(safe-area-inset-bottom)
+            );
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+
+        background: rgba(255,255,255,.97);
+
+        backdrop-filter: blur(15px);
+
+        border-top: 1px solid var(--border);
+
+        box-shadow:
+            0 -8px 25px rgba(81,61,61,.08);
+    }
+
+    .mobile-total {
+        flex: 1;
+    }
+
+    .mobile-total small {
+        display: block;
+
+        margin-bottom: 2px;
+
+        color: var(--brown-light);
+
+        font-size: 8px;
+    }
+
+    .mobile-total strong {
+        color: var(--pink);
+
+        font-family: "Playfair Display", serif;
+
+        font-size: 21px;
+    }
+
+    .mobile-checkout-btn {
+        height: 44px;
+
+        padding: 0 20px;
+
+        border: none;
+
+        border-radius: 9px;
+
+        background: var(--pink);
+
+        color: white;
+
+        font-size: 10px;
+
+        font-weight: 700;
+    }
+
+    .mobile-checkout-btn:disabled {
+        opacity: .5;
+
+        cursor: not-allowed;
+    }
+
+    .back-top {
+        bottom: 72px;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 30px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+
+        gap: 12px;
+
+        text-align: center;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 430px
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .logo span {
+        font-size: 16px;
+    }
+
+    .page-title h1 {
+        font-size: 39px;
+    }
+
+    .cart-item {
+        grid-template-columns:
+            75px
+            minmax(0, 1fr);
+    }
+
+    .product-image {
+        width: 75px;
+        height: 75px;
+    }
+
+    .product-details h3 {
+        font-size: 15px;
+    }
+
+    .product-description {
+        display: none;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header id="header">
+
+    <div class="navbar">
+
+
+        <!-- LOGO -->
+
+        <a href="index.html" class="logo">
+
+            <img
+                src="logo.png"
+                alt="The Knot House Logo"
+            >
+
+            <span>
+                The Knot House
+            </span>
+
+        </a>
+
+
+        <!-- NAVIGATION -->
+
+        <ul class="nav-links" id="navLinks">
+
+            <li>
+                <a href="index.html">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="about.html">
+                    About Us
+                </a>
+            </li>
+
+            <li>
+                <a href="product.html">
+                    Products
+                </a>
+            </li>
+
+            <li>
+                <a href="gallery.html">
+                    Gallery
+                </a>
+            </li>
+
+            <li>
+                <a href="contact.html">
+                    Contact Us
+                </a>
+            </li>
+
+            <li>
+                <a href="feedback.html">
+                    Feedback
+                </a>
+            </li>
+
+            <li>
+                <a href="faq.html">
+                    FAQ
+                </a>
+            </li>
+
+        </ul>
+
+
+        <!-- HEADER RIGHT -->
+
+        <div class="header-right">
+
+            <!-- IMPORTANT:
+                 This is a normal link.
+                 Clicking it OPENS cart.html.
+                 There is NO alert.
+            -->
+
+            <a
+                href="cart.html"
+                class="cart-link"
+                aria-label="Open Cart"
+            >
+
+                🛒
+
+                <span
+                    class="cart-count"
+                    id="cartCount"
+                >
+                    0
+                </span>
+
+            </a>
+
+
+            <button
+                class="menu-btn"
+                id="menuBtn"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     PAGE TOP
+===================================================== -->
+
+<section class="page-top">
+
+    <div class="container">
+
+        <div class="breadcrumb">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <span>›</span>
+
+            <span>
+                My Cart
+            </span>
+
+        </div>
+
+
+        <div class="page-title">
+
+            <div>
+
+                <h1>
+                    My <span>Cart</span>
+                </h1>
+
+            </div>
+
+            <p>
+                Your favourite crochet creations,
+                collected in one place. Review your
+                items and get your handmade order ready.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CART SECTION
+===================================================== -->
+
+<main class="cart-section">
+
+    <div class="container">
+
+        <div class="cart-layout">
+
+
+            <!-- =================================================
+                 LEFT SIDE
+            ================================================== -->
+
+            <div>
+
+
+                <!-- CART -->
+
+                <section class="card cart-card">
+
+                    <div class="cart-card-header">
+
+                        <div class="cart-title">
+
+                            <div class="cart-title-icon">
+                                🛒
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Your Items
+                                </h2>
+
+                                <span
+                                    class="cart-items-text"
+                                    id="itemsText"
+                                >
+                                    0 items
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="clear-cart"
+                            id="clearCart"
+                        >
+                            Clear Cart
+                        </button>
+
+                    </div>
+
+
+                    <!-- CART ITEMS -->
+
+                    <div id="cartItems"></div>
+
+
+                    <!-- EMPTY CART -->
+
+                    <div
+                        class="empty-cart"
+                        id="emptyCart"
+                        style="display:none;"
+                    >
+
+                        <div class="empty-cart-icon">
+                            🧶
+                        </div>
+
+                        <h2>
+                            Your cart is empty
+                        </h2>
+
+                        <p>
+                            Looks like you haven't added
+                            any crochet treasures yet.
+                            Explore our collection and
+                            find something made especially
+                            for you.
+                        </p>
+
+                        <a href="product.html">
+                            Explore Products →
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ADD MORE -->
+
+                <div class="add-more">
+
+                    <div class="add-more-left">
+
+                        <div class="add-more-icon">
+                            +
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Want to add something more?
+                            </strong>
+
+                            <small>
+                                Explore more handmade crochet creations.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <a
+                        href="product.html"
+                        class="shop-more-btn"
+                    >
+                        Shop More
+                    </a>
+
+                </div>
+
+
+                <!-- COUPON -->
+
+                <section class="card info-card">
+
+                    <div class="info-title">
+
+                        <div class="info-icon">
+                            %
+                        </div>
+
+                        <h3>
+                            Apply Coupon
+                        </h3>
+
+                    </div>
+
+
+                    <div class="coupon-form">
+
+                        <input
+                            type="text"
+                            id="couponInput"
+                            class="coupon-input"
+                            placeholder="Enter coupon code"
+                        >
+
+                        <button
+                            class="apply-coupon"
+                            id="applyCoupon"
+                        >
+                            Apply
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="coupon-message"
+                        id="couponMessage"
+                    ></div>
+
+                </section>
+
+
+                <!-- DELIVERY -->
+
+                <section class="card info-card">
+
+                    <div class="info-title">
+
+                        <div class="info-icon">
+                            📍
+                        </div>
+
+                        <h3>
+                            Delivery Details
+                        </h3>
+
+                    </div>
+
+
+                    <div class="delivery-box">
+
+                        <div class="delivery-icon">
+                            🏠
+                        </div>
+
+                        <div class="delivery-text">
+
+                            <strong>
+                                Delivery address
+                            </strong>
+
+                            <span>
+                                Your address will be collected during checkout
+                            </span>
+
+                        </div>
+
+                        <button
+                            class="delivery-edit"
+                            onclick="showToast('Address can be added during checkout.')"
+                        >
+                            Edit
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT SIDE SUMMARY
+            ================================================== -->
+
+            <aside class="summary-column">
+
+                <section class="card summary-card">
+
+                    <div class="summary-header">
+
+                        <h2>
+                            Price Details
+                        </h2>
+
+                    </div>
+
+
+                    <div class="summary-body">
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Item Total
+                            </span>
+
+                            <strong id="subtotal">
+                                ₹0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Delivery Fee
+                            </span>
+
+                            <strong id="deliveryFee">
+                                ₹0
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="summary-row discount-row"
+                            id="discountRow"
+                            style="display:none;"
+                        >
+
+                            <span>
+                                Coupon Discount
+                            </span>
+
+                            <strong id="discount">
+                                -₹0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="divider"></div>
+
+
+                        <!-- FREE SHIPPING -->
+
+                        <div class="shipping-box">
+
+                            <div
+                                class="shipping-text"
+                                id="shippingText"
+                            >
+                                Add ₹999 worth of products
+                                for FREE delivery.
+                            </div>
+
+                            <div class="progress">
+
+                                <div
+                                    class="progress-bar"
+                                    id="progressBar"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TOTAL -->
+
+                        <div class="total-row">
+
+                            <span>
+                                Total Amount
+                            </span>
+
+                            <span
+                                class="total-price"
+                                id="totalAmount"
+                            >
+                                ₹0
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            class="checkout-btn"
+                            id="checkoutBtn"
+                        >
+                            Proceed to Checkout →
+                        </button>
+
+
+                        <div class="secure">
+                            🔒 Safe &amp; secure order placement
+                        </div>
+
+
+                        <!-- TRUST -->
+
+                        <div class="trust-features">
+
+                            <div class="trust-item">
+
+                                <div class="trust-icon">
+                                    🧶
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Handmade with Love
+                                    </strong>
+
+                                    <span>
+                                        Every item is carefully crafted.
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <div class="trust-icon">
+                                    ♡
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Customisation Available
+                                    </strong>
+
+                                    <span>
+                                        Your idea, our craft.
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="trust-item">
+
+                                <div class="trust-icon">
+                                    ✦
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Quality Crochet
+                                    </strong>
+
+                                    <span>
+                                        Made especially for you.
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     MOBILE CHECKOUT BAR
+===================================================== -->
+
+<div class="mobile-checkout">
+
+    <div class="mobile-total">
+
+        <small>
+            Total Amount
+        </small>
+
+        <strong id="mobileTotal">
+            ₹0
+        </strong>
+
+    </div>
+
+
+    <button
+        class="mobile-checkout-btn"
+        id="mobileCheckout"
+    >
+        Checkout →
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="container">
+
+        <div class="footer-grid">
+
+
+            <div class="footer-brand">
+
+                <a
+                    href="index.html"
+                    class="logo"
+                >
+
+                    <img
+                        src="logo.png"
+                        alt="The Knot House Logo"
+                    >
+
+                    <span>
+                        The Knot House
+                    </span>
+
+                </a>
+
+                <p>
+                    Handmade crochet creations crafted
+                    with love, creativity and care.
+                    Every stitch tells a story.
+                </p>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Quick Links
+                </h3>
+
+                <ul>
+
+                    <li>
+                        <a href="index.html">
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="about.html">
+                            About Us
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="product.html">
+                            Products
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="gallery.html">
+                            Gallery
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Customer Care
+                </h3>
+
+                <ul>
+
+                    <li>
+                        <a href="contact.html">
+                            Contact Us
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="feedback.html">
+                            Feedback
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="faq.html">
+                            FAQ
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="cart.html">
+                            My Cart
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Contact
+                </h3>
+
+                <ul>
+
+                    <li>
+                        <a href="mailto:theknothouse@gmail.com">
+                            theknothouse@gmail.com
+                        </a>
+                    </li>
+
+                    <li>
+                        <span>
+                            Ahmedabad, Gujarat, India
+                        </span>
+                    </li>
+					<li>
+					<a href="https://www.instagram.com/crochet_creation_by_amrin/"
+                                  target="_blank"
+                              rel="noopener noreferrer">
+                              📷 @crochet_creation_by_amrin
+                            </a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 The Knot House. Made with ♡ and yarn.
+            </p>
+
+            <div class="socials">
+
+                <a
+                    href="#"
+                    class="social"
+                >
+                    ◎
+                </a>
+
+                <a
+                    href="#"
+                    class="social"
+                >
+                    f
+                </a>
+
+                <a
+                    href="#"
+                    class="social"
+                >
+                    p
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     BACK TO TOP
+===================================================== -->
+
+<button
+    class="back-top"
+    id="backTop"
+>
+    ↑
+</button>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script>
+
+/* =========================================================
+   CART STORAGE
+   ========================================================= */
+
+const CART_KEY = "knotHouseCart";
+
+
+/* =========================================================
+   GET CART
+   ========================================================= */
+
+function getCart() {
+
+    try {
+
+        const cart =
+            JSON.parse(
+                localStorage.getItem(CART_KEY)
+            );
+
+        if (Array.isArray(cart)) {
+            return cart;
+        }
+
+        return [];
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE CART
+   ========================================================= */
+
+function saveCart(cart) {
+
+    localStorage.setItem(
+        CART_KEY,
+        JSON.stringify(cart)
+    );
+
+}
+
+
+/* =========================================================
+   FORMAT PRICE
+   ========================================================= */
+
+function price(value) {
+
+    return "₹" +
+        Number(value || 0)
+        .toLocaleString("en-IN");
+
+}
+
+
+/* =========================================================
+   CART DATA
+   ========================================================= */
+
+function getCartData() {
+
+    const cart =
+        getCart();
+
+    let subtotal = 0;
+
+    let quantity = 0;
+
+
+    cart.forEach(function(item) {
+
+        const itemPrice =
+            Number(item.price) || 0;
+
+        const itemQuantity =
+            Number(item.quantity) || 1;
+
+
+        subtotal +=
+            itemPrice * itemQuantity;
+
+        quantity +=
+            itemQuantity;
+
+    });
+
+
+    let delivery = 0;
+
+
+    if (
+        subtotal > 0 &&
+        subtotal < 999
+    ) {
+
+        delivery = 60;
+
+    }
+
+
+    let discount = 0;
+
+
+    if (
+        localStorage.getItem(
+            "knotHouseCoupon"
+        ) === "KNOT10"
+    ) {
+
+        discount =
+            Math.round(
+                subtotal * 0.10
+            );
+
+    }
+
+
+    const total =
+        subtotal +
+        delivery -
+        discount;
+
+
+    return {
+
+        subtotal: subtotal,
+
+        delivery: delivery,
+
+        discount: discount,
+
+        total: Math.max(0, total),
+
+        quantity: quantity
+
+    };
+
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
+
+function getImage(item) {
+
+    return (
+        item.image ||
+        item.img ||
+        item.imageUrl ||
+        "./about-crochet.jpg"
+    );
+
+}
+
+
+/* =========================================================
+   RENDER CART
+   ========================================================= */
+
+function renderCart() {
+
+    const cart =
+        getCart();
+
+
+    const cartItems =
+        document.getElementById(
+            "cartItems"
+        );
+
+
+    const emptyCart =
+        document.getElementById(
+            "emptyCart"
+        );
+
+
+    const clearCart =
+        document.getElementById(
+            "clearCart"
+        );
+
+
+    cartItems.innerHTML = "";
+
+
+    /* =====================================================
+       EMPTY CART
+    ===================================================== */
+
+    if (cart.length === 0) {
+
+        emptyCart.style.display =
+            "block";
+
+        clearCart.style.display =
+            "none";
+
+    }
+
+
+    /* =====================================================
+       CART HAS ITEMS
+    ===================================================== */
+
+    else {
+
+        emptyCart.style.display =
+            "none";
+
+        clearCart.style.display =
+            "block";
+
+
+        cart.forEach(function(item, index) {
+
+
+            const itemPrice =
+                Number(item.price) || 0;
+
+
+            const quantity =
+                Number(item.quantity) || 1;
+
+
+            const total =
+                itemPrice * quantity;
+
+
+            const article =
+                document.createElement(
+                    "article"
+                );
+
+
+            article.className =
+                "cart-item";
+
+
+            article.innerHTML = `
+
+                <div class="product-image">
+
+                    <img
+                        src="${getImage(item)}"
+                        alt="${item.name || "Crochet Product"}"
+                        onerror="this.src='./about-crochet.jpg'"
+                    >
+
+                </div>
+
+
+                <div class="product-details">
+
+                    <span class="product-category">
+                        ${item.category || "Crochet"}
+                    </span>
+
+                    <h3>
+                        ${item.name || "Crochet Product"}
+                    </h3>
+
+                    <p class="product-description">
+                        ${item.description || "Beautiful handmade crochet creation crafted with care."}
+                    </p>
+
+                    <div class="product-price">
+                        ${price(itemPrice)}
+                    </div>
+
+
+                    <div class="item-actions">
+
+                        <div class="quantity-box">
+
+                            <button
+                                class="quantity-btn"
+                                onclick="changeQuantity(${index}, -1)"
+                            >
+                                −
+                            </button>
+
+                            <span class="quantity-value">
+                                ${quantity}
+                            </span>
+
+                            <button
+                                class="quantity-btn"
+                                onclick="changeQuantity(${index}, 1)"
+                            >
+                                +
+                            </button>
+
+                        </div>
+
+
+                        <button
+                            class="edit-btn"
+                            onclick="editItem(${index})"
+                        >
+                            Edit
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="item-right">
+
+                    <div class="item-total">
+                        ${price(total)}
+                    </div>
+
+                    <button
+                        class="remove-btn"
+                        onclick="removeItem(${index})"
+                    >
+                        🗑 Remove
+                    </button>
+
+                </div>
+
+            `;
+
+
+            cartItems.appendChild(
+                article
+            );
+
+        });
+
+    }
+
+
+    updateSummary();
+
+}
+
+
+/* =========================================================
+   UPDATE SUMMARY
+   ========================================================= */
+
+function updateSummary() {
+
+    const data =
+        getCartData();
+
+
+    /* HEADER COUNT */
+
+    document.getElementById(
+        "cartCount"
+    ).textContent =
+        data.quantity;
+
+
+    /* ITEMS */
+
+    document.getElementById(
+        "itemsText"
+    ).textContent =
+        data.quantity +
+        (
+            data.quantity === 1
+                ? " item"
+                : " items"
+        );
+
+
+    /* SUBTOTAL */
+
+    document.getElementById(
+        "subtotal"
+    ).textContent =
+        price(data.subtotal);
+
+
+    /* DELIVERY */
+
+    document.getElementById(
+        "deliveryFee"
+    ).textContent =
+        data.delivery === 0 &&
+        data.subtotal > 0
+            ? "FREE"
+            : price(data.delivery);
+
+
+    /* DISCOUNT */
+
+    const discountRow =
+        document.getElementById(
+            "discountRow"
+        );
+
+
+    if (data.discount > 0) {
+
+        discountRow.style.display =
+            "flex";
+
+        document.getElementById(
+            "discount"
+        ).textContent =
+            "-" + price(data.discount);
+
+    } else {
+
+        discountRow.style.display =
+            "none";
+
+    }
+
+
+    /* TOTAL */
+
+    document.getElementById(
+        "totalAmount"
+    ).textContent =
+        price(data.total);
+
+
+    document.getElementById(
+        "mobileTotal"
+    ).textContent =
+        price(data.total);
+
+
+    /* =====================================================
+       FREE SHIPPING PROGRESS
+    ===================================================== */
+
+    const progress =
+        Math.min(
+            100,
+            (data.subtotal / 999) * 100
+        );
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        progress + "%";
+
+
+    const shippingText =
+        document.getElementById(
+            "shippingText"
+        );
+
+
+    if (data.subtotal === 0) {
+
+        shippingText.textContent =
+            "Add ₹999 worth of products for FREE delivery.";
+
+    }
+
+    else if (data.subtotal >= 999) {
+
+        shippingText.textContent =
+            "🎉 Congratulations! You unlocked FREE delivery.";
+
+    }
+
+    else {
+
+        const remaining =
+            999 - data.subtotal;
+
+        shippingText.textContent =
+            "Add " +
+            price(remaining) +
+            " more for FREE delivery.";
+
+    }
+
+
+    /* =====================================================
+       CHECKOUT BUTTON
+    ===================================================== */
+
+    const checkoutBtn =
+        document.getElementById(
+            "checkoutBtn"
+        );
+
+
+    const mobileCheckout =
+        document.getElementById(
+            "mobileCheckout"
+        );
+
+
+    const hasItems =
+        data.quantity > 0;
+
+
+    checkoutBtn.disabled =
+        !hasItems;
+
+    mobileCheckout.disabled =
+        !hasItems;
+
+}
+
+
+/* =========================================================
+   CHANGE QUANTITY
+   ========================================================= */
+
+function changeQuantity(
+    index,
+    amount
+) {
+
+    const cart =
+        getCart();
+
+
+    if (!cart[index]) {
+        return;
+    }
+
+
+    let quantity =
+        Number(
+            cart[index].quantity
+        ) || 1;
+
+
+    quantity += amount;
+
+
+    if (quantity <= 0) {
+
+        removeItem(index);
+
+        return;
+
+    }
+
+
+    cart[index].quantity =
+        quantity;
+
+
+    saveCart(cart);
+
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   EDIT ITEM
+   ========================================================= */
+
+function editItem(index) {
+
+    const cart =
+        getCart();
+
+
+    if (!cart[index]) {
+        return;
+    }
+
+
+    /*
+       For this version,
+       Edit increases the item's
+       quantity by one and gives
+       the user feedback.
+    */
+
+    cart[index].quantity =
+        (Number(cart[index].quantity) || 1) + 1;
+
+
+    saveCart(cart);
+
+    renderCart();
+
+
+    showToast(
+        "Item updated successfully."
+    );
+
+}
+
+
+/* =========================================================
+   REMOVE ITEM
+   ========================================================= */
+
+function removeItem(index) {
+
+    const cart =
+        getCart();
+
+
+    if (!cart[index]) {
+        return;
+    }
+
+
+    const itemName =
+        cart[index].name ||
+        "Item";
+
+
+    cart.splice(
+        index,
+        1
+    );
+
+
+    saveCart(cart);
+
+
+    renderCart();
+
+
+    showToast(
+        itemName +
+        " removed from your cart."
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR CART
+   ========================================================= */
+
+document
+    .getElementById("clearCart")
+    .addEventListener(
+        "click",
+        function() {
+
+            const cart =
+                getCart();
+
+
+            if (cart.length === 0) {
+                return;
+            }
+
+
+            const answer =
+                confirm(
+                    "Are you sure you want to clear your cart?"
+                );
+
+
+            if (!answer) {
+                return;
+            }
+
+
+            localStorage.removeItem(
+                CART_KEY
+            );
+
+
+            localStorage.removeItem(
+                "knotHouseCoupon"
+            );
+
+
+            renderCart();
+
+
+            showToast(
+                "Your cart has been cleared."
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   COUPON
+   ========================================================= */
+
+document
+    .getElementById("applyCoupon")
+    .addEventListener(
+        "click",
+        function() {
+
+            const input =
+                document.getElementById(
+                    "couponInput"
+                );
+
+
+            const message =
+                document.getElementById(
+                    "couponMessage"
+                );
+
+
+            const code =
+                input.value
+                .trim()
+                .toUpperCase();
+
+
+            if (!code) {
+
+                message.style.color =
+                    "var(--red)";
+
+                message.textContent =
+                    "Please enter a coupon code.";
+
+                return;
+
+            }
+
+
+            if (code === "KNOT10") {
+
+                localStorage.setItem(
+                    "knotHouseCoupon",
+                    "KNOT10"
+                );
+
+
+                message.style.color =
+                    "var(--green)";
+
+                message.textContent =
+                    "✓ KNOT10 applied — 10% discount added.";
+
+
+                updateSummary();
+
+
+                showToast(
+                    "Coupon applied successfully."
+                );
+
+            }
+
+            else {
+
+                localStorage.removeItem(
+                    "knotHouseCoupon"
+                );
+
+
+                message.style.color =
+                    "var(--red)";
+
+                message.textContent =
+                    "Invalid coupon. Try KNOT10.";
+
+                updateSummary();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   CHECKOUT
+   ========================================================= */
+
+function checkout() {
+
+    const cart =
+        getCart();
+
+
+    if (cart.length === 0) {
+
+        showToast(
+            "Your cart is empty."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       When you create checkout.html,
+       this automatically opens it.
+    */
+
+    window.location.href =
+        "checkout.html";
+
+}
+
+
+document
+    .getElementById(
+        "checkoutBtn"
+    )
+    .addEventListener(
+        "click",
+        checkout
+    );
+
+
+document
+    .getElementById(
+        "mobileCheckout"
+    )
+    .addEventListener(
+        "click",
+        checkout
+    );
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+let toastTimer;
+
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            function() {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+const menuBtn =
+    document.getElementById(
+        "menuBtn"
+    );
+
+
+const navLinks =
+    document.getElementById(
+        "navLinks"
+    );
+
+
+menuBtn.addEventListener(
+    "click",
+    function() {
+
+        navLinks.classList.toggle(
+            "open"
+        );
+
+
+        if (
+            navLinks.classList.contains(
+                "open"
+            )
+        ) {
+
+            menuBtn.textContent =
+                "✕";
+
+        } else {
+
+            menuBtn.textContent =
+                "☰";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CLOSE MOBILE MENU
+   ========================================================= */
+
+document
+    .querySelectorAll(".nav-links a")
+    .forEach(function(link) {
+
+        link.addEventListener(
+            "click",
+            function() {
+
+                navLinks.classList.remove(
+                    "open"
+                );
+
+                menuBtn.textContent =
+                    "☰";
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   HEADER SCROLL
+   ========================================================= */
+
+window.addEventListener(
+    "scroll",
+    function() {
+
+        const header =
+            document.getElementById(
+                "header"
+            );
+
+
+        if (window.scrollY > 30) {
+
+            header.classList.add(
+                "scrolled"
+            );
+
+        } else {
+
+            header.classList.remove(
+                "scrolled"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   BACK TO TOP
+   ========================================================= */
+
+const backTop =
+    document.getElementById(
+        "backTop"
+    );
+
+
+window.addEventListener(
+    "scroll",
+    function() {
+
+        if (window.scrollY > 400) {
+
+            backTop.classList.add(
+                "show"
+            );
+
+        } else {
+
+            backTop.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+backTop.addEventListener(
+    "click",
+    function() {
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+);
+
+
+/* =========================================================
+   STORAGE UPDATE
+   ========================================================= */
+
+window.addEventListener(
+    "storage",
+    function() {
+
+        renderCart();
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
+
+renderCart();
+
+</script>
+
+</body>
+</html>
