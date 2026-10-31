@@ -1,40 +1,57 @@
+
 <?php
 session_start();
 
 /* =========================================================
-   ADMIN LOGIN CHECK
-   ========================================================= */
+   1. ADMIN LOGIN CHECK
+========================================================= */
+
 if (!isset($_SESSION["admin_id"])) {
     header("Location: login.php");
     exit();
 }
 
-
 /* =========================================================
-   DATABASE CONNECTION
-   ========================================================= */
-$host = "localhost";
-$username = "root";
-$password = "";
-$database = "knot_house";
+   2. DATABASE CONNECTION
+========================================================= */
 
-$conn = new mysqli(
-    $host,
-    $username,
-    $password,
-    $database
-);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+$conn = null;
+$dbError = "";
+$tableExists = false;
+
+try {
+    $conn = new mysqli(
+        "localhost",
+        "root",
+        "",
+        "knot_house"
+    );
+
+    $conn->set_charset("utf8mb4");
+
+} catch (mysqli_sql_exception $e) {
+    $dbError = "Unable to connect to the database. Please check your XAMPP settings.";
 }
 
-$conn->set_charset("utf8mb4");
+/* =========================================================
+   3. HELPER FUNCTION
+========================================================= */
 
+function e($value)
+{
+    return htmlspecialchars(
+        (string)($value ?? ""),
+        ENT_QUOTES,
+        "UTF-8"
+    );
+}
 
 /* =========================================================
-   ADMIN INFORMATION
-   ========================================================= */
+   4. ADMIN INFORMATION
+========================================================= */
+
 $adminName = $_SESSION["admin_name"] ?? "Admin";
 $adminEmail = $_SESSION["admin_email"] ?? "";
 
@@ -46,31 +63,10 @@ if ($adminInitial === "") {
     $adminInitial = "A";
 }
 
-
 /* =========================================================
-   CHECK ORDERS TABLE
-   ========================================================= */
-$tableExists = false;
+   5. ORDER STATUS OPTIONS
+========================================================= */
 
-$tableCheck = $conn->query(
-    "SHOW TABLES LIKE 'orders'"
-);
-
-if ($tableCheck && $tableCheck->num_rows > 0) {
-    $tableExists = true;
-}
-
-
-/* =========================================================
-   SEARCH / FILTER VALUES
-   ========================================================= */
-$search = trim($_GET["search"] ?? "");
-$status = trim($_GET["status"] ?? "");
-
-
-/* =========================================================
-   ORDER STATUS LIST
-   ========================================================= */
 $orderStatuses = [
     "Pending",
     "Confirmed",
@@ -80,10 +76,41 @@ $orderStatuses = [
     "Cancelled"
 ];
 
+/* =========================================================
+   6. SEARCH AND FILTER
+========================================================= */
+
+$search = trim($_GET["search"] ?? "");
+$status = trim($_GET["status"] ?? "");
+
+/* Only allow valid order statuses */
+
+if (!in_array($status, $orderStatuses, true)) {
+    $status = "";
+}
 
 /* =========================================================
-   STATISTICS
-   ========================================================= */
+   7. PAGINATION SETTINGS
+========================================================= */
+
+$recordsPerPage = 10;
+
+$currentPage = filter_input(
+    INPUT_GET,
+    "page",
+    FILTER_VALIDATE_INT
+);
+
+$currentPage = max(1, (int)($currentPage ?: 1));
+
+$totalRecords = 0;
+$totalPages = 1;
+$offset = 0;
+
+/* =========================================================
+   8. ORDER STATISTICS
+========================================================= */
+
 $totalOrders = 0;
 $pendingOrders = 0;
 $processingOrders = 0;
@@ -91,173 +118,332 @@ $deliveredOrders = 0;
 
 $orders = [];
 
-
 /* =========================================================
-   FETCH ORDER DATA
-   ========================================================= */
-if ($tableExists) {
+   9. CHECK ORDERS TABLE
+========================================================= */
 
+if ($conn && $dbError === "") {
 
-    /* -----------------------------------------------------
-       TOTAL ORDERS
-       ----------------------------------------------------- */
-    $result = $conn->query("
-        SELECT COUNT(*) AS total
-        FROM orders
-    ");
+    try {
 
-    if ($result) {
+        $checkTable = $conn->query("
+            SELECT COUNT(*) AS total
+            FROM information_schema.tables
+            WHERE table_schema = DATABASE()
+            AND table_name = 'orders'
+        ");
 
-        $row = $result->fetch_assoc();
+        $tableRow = $checkTable->fetch_assoc();
 
-        $totalOrders = (int)$row["total"];
-    }
+        $tableExists = ((int)$tableRow["total"] > 0);
 
+        /* =================================================
+           10. FETCH ORDER INFORMATION
+        ================================================= */
 
-    /* -----------------------------------------------------
-       PENDING ORDERS
-       ----------------------------------------------------- */
-    $result = $conn->query("
-        SELECT COUNT(*) AS total
-        FROM orders
-        WHERE LOWER(order_status) = 'pending'
-    ");
+        if ($tableExists) {
 
-    if ($result) {
+            /*
+             * Check required columns.
+             * This helps identify an incompatible table.
+             */
 
-        $row = $result->fetch_assoc();
+            $requiredColumns = [
+                "id",
+                "customer_name",
+                "customer_email",
+                "customer_phone",
+                "total_amount",
+                "payment_status",
+                "order_status",
+                "created_at"
+            ];
 
-        $pendingOrders = (int)$row["total"];
-    }
+            $columnResult = $conn->query("
+                SHOW COLUMNS FROM orders
+            ");
 
+            $availableColumns = [];
 
-    /* -----------------------------------------------------
-       PROCESSING ORDERS
-       ----------------------------------------------------- */
-    $result = $conn->query("
-        SELECT COUNT(*) AS total
-        FROM orders
-        WHERE LOWER(order_status) IN
-        ('confirmed', 'processing', 'shipped')
-    ");
+            while ($column = $columnResult->fetch_assoc()) {
+                $availableColumns[] = $column["Field"];
+            }
 
-    if ($result) {
-
-        $row = $result->fetch_assoc();
-
-        $processingOrders = (int)$row["total"];
-    }
-
-
-    /* -----------------------------------------------------
-       DELIVERED ORDERS
-       ----------------------------------------------------- */
-    $result = $conn->query("
-        SELECT COUNT(*) AS total
-        FROM orders
-        WHERE LOWER(order_status) = 'delivered'
-    ");
-
-    if ($result) {
-
-        $row = $result->fetch_assoc();
-
-        $deliveredOrders = (int)$row["total"];
-    }
-
-
-    /* =====================================================
-       FETCH ORDERS
-       ===================================================== */
-
-    $sql = "
-        SELECT *
-        FROM orders
-        WHERE 1=1
-    ";
-
-    $types = "";
-    $params = [];
-
-
-    /* -----------------------------------------------------
-       SEARCH
-       ----------------------------------------------------- */
-    if ($search !== "") {
-
-        $sql .= "
-            AND (
-                customer_name LIKE ?
-                OR customer_email LIKE ?
-                OR customer_phone LIKE ?
-                OR CAST(id AS CHAR) LIKE ?
-            )
-        ";
-
-        $searchValue = "%" . $search . "%";
-
-        $types .= "ssss";
-
-        $params[] = $searchValue;
-        $params[] = $searchValue;
-        $params[] = $searchValue;
-        $params[] = $searchValue;
-    }
-
-
-    /* -----------------------------------------------------
-       STATUS FILTER
-       ----------------------------------------------------- */
-    if ($status !== "") {
-
-        $sql .= "
-            AND order_status = ?
-        ";
-
-        $types .= "s";
-
-        $params[] = $status;
-    }
-
-
-    /* -----------------------------------------------------
-       ORDER BY
-       ----------------------------------------------------- */
-    $sql .= "
-        ORDER BY id DESC
-    ";
-
-
-    /* -----------------------------------------------------
-       PREPARE QUERY
-       ----------------------------------------------------- */
-    $stmt = $conn->prepare($sql);
-
-    if ($stmt) {
-
-        if (!empty($params)) {
-
-            $stmt->bind_param(
-                $types,
-                ...$params
+            $missingColumns = array_diff(
+                $requiredColumns,
+                $availableColumns
             );
+
+            if (!empty($missingColumns)) {
+
+                $dbError = "Your orders table is missing required columns: "
+                    . implode(", ", $missingColumns);
+
+                $tableExists = false;
+
+            } else {
+
+                /* =========================================
+                   11. GLOBAL ORDER STATISTICS
+                ========================================= */
+
+                $statsQuery = $conn->query("
+                    SELECT
+                        COUNT(*) AS total_orders,
+
+                        SUM(
+                            CASE
+                                WHEN LOWER(order_status) = 'pending'
+                                THEN 1 ELSE 0
+                            END
+                        ) AS pending_orders,
+
+                        SUM(
+                            CASE
+                                WHEN LOWER(order_status) IN (
+                                    'confirmed',
+                                    'processing',
+                                    'shipped'
+                                )
+                                THEN 1 ELSE 0
+                            END
+                        ) AS processing_orders,
+
+                        SUM(
+                            CASE
+                                WHEN LOWER(order_status) = 'delivered'
+                                THEN 1 ELSE 0
+                            END
+                        ) AS delivered_orders
+
+                    FROM orders
+                ");
+
+                $stats = $statsQuery->fetch_assoc();
+
+                $totalOrders = (int)($stats["total_orders"] ?? 0);
+                $pendingOrders = (int)($stats["pending_orders"] ?? 0);
+                $processingOrders = (int)($stats["processing_orders"] ?? 0);
+                $deliveredOrders = (int)($stats["delivered_orders"] ?? 0);
+
+                /* =========================================
+                   12. BUILD SEARCH QUERY
+                ========================================= */
+
+                $where = " WHERE 1=1 ";
+
+                $types = "";
+                $params = [];
+
+                if ($search !== "") {
+
+                    $where .= "
+                        AND (
+                            CAST(id AS CHAR) LIKE ?
+                            OR customer_name LIKE ?
+                            OR customer_email LIKE ?
+                            OR customer_phone LIKE ?
+                        )
+                    ";
+
+                    $searchValue = "%" . $search . "%";
+
+                    $types .= "ssss";
+
+                    $params[] = $searchValue;
+                    $params[] = $searchValue;
+                    $params[] = $searchValue;
+                    $params[] = $searchValue;
+                }
+
+                /* =========================================
+                   13. STATUS FILTER
+                ========================================= */
+
+                if ($status !== "") {
+
+                    $where .= "
+                        AND LOWER(order_status) = LOWER(?)
+                    ";
+
+                    $types .= "s";
+                    $params[] = $status;
+                }
+
+                /* =========================================
+                   14. TOTAL FILTERED RECORDS
+                ========================================= */
+
+                $countSql = "
+                    SELECT COUNT(*) AS total
+                    FROM orders
+                    $where
+                ";
+
+                $countStmt = $conn->prepare($countSql);
+
+                if (!empty($params)) {
+                    $countStmt->bind_param($types, ...$params);
+                }
+
+                $countStmt->execute();
+
+                $countResult = $countStmt->get_result();
+
+                $countRow = $countResult->fetch_assoc();
+
+                $totalRecords = (int)$countRow["total"];
+
+                $countStmt->close();
+
+                /* =========================================
+                   15. CALCULATE PAGINATION
+                ========================================= */
+
+                $totalPages = max(
+                    1,
+                    (int)ceil($totalRecords / $recordsPerPage)
+                );
+
+                $currentPage = min(
+                    $currentPage,
+                    $totalPages
+                );
+
+                $offset = ($currentPage - 1) * $recordsPerPage;
+
+                /* =========================================
+                   16. FETCH ORDERS
+                ========================================= */
+
+                $sql = "
+                    SELECT
+                        id,
+                        customer_name,
+                        customer_email,
+                        customer_phone,
+                        total_amount,
+                        payment_status,
+                        order_status,
+                        created_at
+
+                    FROM orders
+
+                    $where
+
+                    ORDER BY id DESC
+
+                    LIMIT ? OFFSET ?
+                ";
+
+                $stmt = $conn->prepare($sql);
+
+                $queryTypes = $types . "ii";
+
+                $queryParams = $params;
+
+                $queryParams[] = $recordsPerPage;
+                $queryParams[] = $offset;
+
+                $stmt->bind_param(
+                    $queryTypes,
+                    ...$queryParams
+                );
+
+                $stmt->execute();
+
+                $result = $stmt->get_result();
+
+                while ($row = $result->fetch_assoc()) {
+                    $orders[] = $row;
+                }
+
+                $stmt->close();
+            }
         }
 
-        $stmt->execute();
+    } catch (mysqli_sql_exception $e) {
 
-        $result = $stmt->get_result();
-
-        while ($row = $result->fetch_assoc()) {
-
-            $orders[] = $row;
-        }
-
-        $stmt->close();
+        $dbError = "Something went wrong while loading orders. Please check your database table and columns.";
     }
 }
 
+/* =========================================================
+   17. CLOSE DATABASE CONNECTION
+========================================================= */
 
-$conn->close();
+if ($conn) {
+    $conn->close();
+}
+
+/* =========================================================
+   18. PAGINATION URL
+========================================================= */
+
+function pageUrl($page, $search, $status)
+{
+    $params = [
+        "page" => $page
+    ];
+
+    if ($search !== "") {
+        $params["search"] = $search;
+    }
+
+    if ($status !== "") {
+        $params["status"] = $status;
+    }
+
+    return "orders.php?" . http_build_query($params);
+}
+
+/* =========================================================
+   19. STATUS CSS CLASS
+========================================================= */
+
+function getStatusClass($status)
+{
+    switch (strtolower(trim($status))) {
+
+        case "confirmed":
+            return "confirmed";
+
+        case "processing":
+            return "processing";
+
+        case "shipped":
+            return "shipped";
+
+        case "delivered":
+            return "delivered";
+
+        case "cancelled":
+            return "cancelled";
+
+        default:
+            return "pending";
+    }
+}
+
+/* =========================================================
+   20. PAYMENT CSS CLASS
+========================================================= */
+
+function getPaymentClass($status)
+{
+    switch (strtolower(trim($status))) {
+
+        case "paid":
+        case "completed":
+            return "paid";
+
+        case "failed":
+            return "failed";
+
+        default:
+            return "pending";
+    }
+}
 
 ?>
 
@@ -268,42 +454,27 @@ $conn->close();
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Orders | The Knot House Admin
-    </title>
+    <title>Orders | The Knot House Admin</title>
 
+    <!-- GOOGLE FONTS -->
 
-    <!-- =====================================================
-         GOOGLE FONTS
-         ===================================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
 
         /* =====================================================
-           ROOT COLORS
-           SAME AS DASHBOARD + PRODUCTS
-           ===================================================== */
+           ROOT
+        ===================================================== */
 
         :root {
-
             --pink: #a96771;
             --dark-pink: #8d555e;
-
             --light-pink: #f8e8e7;
             --soft-pink: #f3d8d9;
 
@@ -314,7 +485,6 @@ $conn->close();
             --brown-light: #806969;
 
             --white: #ffffff;
-
             --border: #eadbd8;
 
             --green: #4d9569;
@@ -329,1813 +499,1275 @@ $conn->close();
             --blue: #6387a9;
             --blue-light: #edf4fa;
 
-            --sidebar-width: 255px;
+            --sidebar-width: 245px;
 
-            --shadow:
-                0 8px 30px rgba(81, 61, 61, 0.06);
-
-            --shadow-hover:
-                0 12px 35px rgba(81, 61, 61, 0.10);
+            --shadow: 0 5px 22px rgba(81,61,61,.055);
+            --shadow-hover: 0 9px 28px rgba(81,61,61,.09);
         }
-
 
         /* =====================================================
            RESET
-           ===================================================== */
+        ===================================================== */
 
         * {
-
             margin: 0;
             padding: 0;
-
             box-sizing: border-box;
         }
 
-
         html {
-
             scroll-behavior: smooth;
         }
 
-
         body {
-
             font-family: "DM Sans", sans-serif;
-
             background: var(--cream);
-
             color: var(--brown);
-
             min-height: 100vh;
-
             overflow-x: hidden;
         }
 
-
         a {
-
             text-decoration: none;
-
             color: inherit;
         }
-
 
         button,
         input,
         select {
-
             font-family: inherit;
         }
 
+        button {
+            cursor: pointer;
+        }
 
         /* =====================================================
            SIDEBAR
-           ===================================================== */
+        ===================================================== */
 
         .sidebar {
-
             position: fixed;
-
-            left: 0;
             top: 0;
+            left: 0;
             bottom: 0;
 
             width: var(--sidebar-width);
 
             background: var(--white);
-
             border-right: 1px solid var(--border);
 
             display: flex;
-
             flex-direction: column;
 
             z-index: 1000;
 
-            transition:
-                transform 0.3s ease;
+            transition: transform .3s ease;
 
-            box-shadow:
-                5px 0 25px rgba(81, 61, 61, 0.03);
+            box-shadow: 4px 0 20px rgba(81,61,61,.025);
         }
 
-
-        /* =====================================================
-           BRAND
-           ===================================================== */
+        /* BRAND */
 
         .sidebar-brand {
-
-            height: 82px;
+            min-height: 78px;
 
             display: flex;
-
             align-items: center;
 
-            padding: 0 22px;
+            padding: 0 18px;
 
             border-bottom: 1px solid var(--border);
         }
 
-
         .brand-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
 
-            width: 43px;
-            height: 43px;
+            border-radius: 12px;
 
-            border-radius: 13px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--pink),
-                    var(--dark-pink)
-                );
+            background: linear-gradient(
+                135deg,
+                var(--pink),
+                var(--dark-pink)
+            );
 
             display: flex;
-
             align-items: center;
-
             justify-content: center;
 
+            color: white;
             font-size: 22px;
 
-            color: white;
+            margin-right: 10px;
 
-            margin-right: 12px;
-
-            box-shadow:
-                0 6px 15px rgba(169, 103, 113, 0.22);
+            box-shadow: 0 5px 13px rgba(169,103,113,.18);
         }
 
-
         .brand-text {
-
+            min-width: 0;
             line-height: 1.1;
         }
 
-
         .brand-title {
-
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 18px;
-
+            font-family: "Playfair Display", serif;
+            font-size: 19px;
             font-weight: 700;
-
             color: var(--brown);
-        }
 
+            white-space: nowrap;
+        }
 
         .brand-subtitle {
+            margin-top: 5px;
 
-            font-size: 10px;
-
-            letter-spacing: 1.5px;
-
+            font-size: 8px;
             font-weight: 700;
+            letter-spacing: 1.7px;
 
             color: var(--pink);
-
-            margin-top: 5px;
         }
 
-
-        /* =====================================================
-           SIDEBAR NAV
-           ===================================================== */
+        /* SIDEBAR CONTENT */
 
         .sidebar-content {
-
             flex: 1;
-
             overflow-y: auto;
-
-            padding: 22px 14px;
+            padding: 20px 12px;
         }
 
-
         .nav-section {
-
             margin-bottom: 25px;
         }
 
-
         .nav-title {
-
-            padding: 0 12px;
-
+            padding: 0 11px;
             margin-bottom: 9px;
 
-            font-size: 10px;
-
-            font-weight: 700;
-
+            font-size: 9px;
+            font-weight: 800;
             letter-spacing: 1.5px;
-
             text-transform: uppercase;
 
             color: #a38e8e;
         }
 
-
         .nav-link {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-
+            min-height: 43px;
             width: 100%;
 
-            min-height: 45px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
 
-            padding: 10px 12px;
-
+            padding: 9px 12px;
             margin-bottom: 4px;
 
-            border-radius: 11px;
+            border-radius: 9px;
 
             color: var(--brown-light);
 
-            font-size: 14px;
-
+            font-size: 12px;
             font-weight: 600;
 
-            transition:
-                background 0.25s ease,
-                color 0.25s ease,
-                transform 0.25s ease;
+            transition: .2s ease;
         }
 
-
         .nav-link:hover {
-
             background: var(--light-pink);
-
             color: var(--dark-pink);
-
             transform: translateX(2px);
         }
 
-
         .nav-link.active {
-
             background: var(--light-pink);
-
             color: var(--dark-pink);
-
             font-weight: 700;
 
-            box-shadow:
-                inset 3px 0 0 var(--pink);
+            box-shadow: inset 3px 0 0 var(--pink);
         }
-
 
         .nav-icon {
+            width: 23px;
+            min-width: 23px;
 
-            width: 25px;
-
-            display: inline-flex;
-
+            display: flex;
+            align-items: center;
             justify-content: center;
 
-            align-items: center;
-
-            font-size: 17px;
+            font-size: 16px;
         }
 
-
-        /* =====================================================
-           SIDEBAR BOTTOM
-           ===================================================== */
+        /* SIDEBAR PROFILE */
 
         .sidebar-bottom {
-
-            padding: 15px;
-
+            padding: 12px;
             border-top: 1px solid var(--border);
         }
 
-
         .admin-mini {
-
             display: flex;
-
             align-items: center;
 
-            padding: 11px;
+            padding: 10px;
 
-            border-radius: 13px;
+            border-radius: 11px;
 
             background: var(--cream);
-
             border: 1px solid var(--border);
         }
 
-
         .admin-avatar {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+
+            border-radius: 50%;
+
+            background: var(--pink);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            margin-right: 9px;
+        }
+
+        .admin-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .admin-name {
+            font-size: 11px;
+            font-weight: 700;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .admin-role {
+            margin-top: 3px;
+            font-size: 10px;
+            color: var(--brown-light);
+        }
+
+        .logout-link {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            color: var(--red);
+            font-size: 16px;
+
+            transition: .2s ease;
+        }
+
+        .logout-link:hover {
+            background: var(--red-light);
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 72px;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 28px;
+
+            background: rgba(255,250,247,.96);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
 
             width: 39px;
             height: 39px;
 
-            border-radius: 50%;
-
-            background: var(--pink);
-
-            color: white;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 14px;
-
-            font-weight: 700;
-
-            margin-right: 10px;
-
-            flex-shrink: 0;
-        }
-
-
-        .admin-info {
-
-            min-width: 0;
-
-            flex: 1;
-        }
-
-
-        .admin-name {
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            color: var(--brown);
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-        }
-
-
-        .admin-role {
-
-            font-size: 11px;
-
-            color: var(--brown-light);
-
-            margin-top: 2px;
-        }
-
-
-        .logout-link {
-
-            width: 32px;
-            height: 32px;
-
+            border: 1px solid var(--border);
+            background: white;
             border-radius: 9px;
 
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            color: var(--red);
-
-            font-size: 16px;
-
-            transition: 0.25s ease;
-        }
-
-
-        .logout-link:hover {
-
-            background: var(--red-light);
-
-            transform: scale(1.05);
-        }
-
-
-        /* =====================================================
-           MAIN
-           ===================================================== */
-
-        .main {
-
-            margin-left: var(--sidebar-width);
-
-            min-height: 100vh;
-        }
-
-
-        /* =====================================================
-           TOPBAR
-           ===================================================== */
-
-        .topbar {
-
-            height: 76px;
-
-            background:
-                rgba(255, 250, 247, 0.94);
-
-            backdrop-filter: blur(14px);
-
-            -webkit-backdrop-filter: blur(14px);
-
-            border-bottom: 1px solid var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 30px;
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 100;
-        }
-
-
-        .topbar-left {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 14px;
-        }
-
-
-        .mobile-menu-btn {
-
-            display: none;
-
-            width: 40px;
-            height: 40px;
-
-            border: 1px solid var(--border);
-
-            background: var(--white);
-
-            border-radius: 10px;
-
             color: var(--brown);
-
-            font-size: 20px;
-
-            cursor: pointer;
+            font-size: 19px;
         }
-
 
         .topbar-title h2 {
-
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 23px;
-
+            font-family: "Playfair Display", serif;
+            font-size: 24px;
             color: var(--brown);
-
-            font-weight: 700;
         }
-
 
         .topbar-title p {
-
-            color: var(--brown-light);
-
-            font-size: 12px;
-
             margin-top: 2px;
+            font-size: 10px;
+            color: var(--brown-light);
         }
-
 
         .topbar-right {
-
             display: flex;
-
             align-items: center;
-
-            gap: 15px;
+            gap: 13px;
         }
-
 
         .view-store-btn {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            padding: 9px 14px;
-
-            border-radius: 9px;
-
-            border: 1px solid var(--border);
-
-            background: var(--white);
-
-            color: var(--brown);
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            transition: 0.25s ease;
-        }
-
-
-        .view-store-btn:hover {
-
-            background: var(--light-pink);
-
-            border-color: var(--soft-pink);
-
-            color: var(--dark-pink);
-
-            transform: translateY(-1px);
-        }
-
-
-        .top-admin {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 9px;
-
-            padding-left: 14px;
-
-            border-left: 1px solid var(--border);
-        }
-
-
-        .top-admin-avatar {
-
-            width: 37px;
             height: 37px;
 
-            border-radius: 50%;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background: var(--pink);
-
-            color: white;
-
-            font-size: 13px;
-
-            font-weight: 700;
-        }
-
-
-        .top-admin-text strong {
-
-            display: block;
-
-            color: var(--brown);
-
-            font-size: 12px;
-        }
-
-
-        .top-admin-text span {
-
-            display: block;
-
-            color: var(--brown-light);
-
-            font-size: 10px;
-
-            margin-top: 2px;
-        }
-
-
-        /* =====================================================
-           CONTENT
-           ===================================================== */
-
-        .content {
-
-            padding: 30px;
-        }
-
-
-        /* =====================================================
-           PAGE HEADER
-           ===================================================== */
-
-        .page-header {
-
-            display: flex;
-
-            align-items: flex-end;
-
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 26px;
-        }
-
-
-        .page-heading h1 {
-
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 31px;
-
-            color: var(--brown);
-
-            line-height: 1.15;
-
-            margin-bottom: 7px;
-        }
-
-
-        .page-heading p {
-
-            font-size: 13px;
-
-            color: var(--brown-light);
-
-            max-width: 650px;
-
-            line-height: 1.6;
-        }
-
-
-        /* =====================================================
-           NEW ORDER BUTTON
-           ===================================================== */
-
-        .new-order-btn {
-
             display: inline-flex;
-
             align-items: center;
-
-            gap: 8px;
-
-            background: var(--pink);
-
-            color: white;
-
-            padding: 11px 17px;
-
-            border-radius: 10px;
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            white-space: nowrap;
-
-            transition: 0.25s ease;
-
-            box-shadow:
-                0 6px 16px rgba(169, 103, 113, 0.18);
-        }
-
-
-        .new-order-btn:hover {
-
-            background: var(--dark-pink);
-
-            transform: translateY(-2px);
-        }
-
-
-        /* =====================================================
-           STATISTICS
-           ===================================================== */
-
-        .stats-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
-            gap: 17px;
-
-            margin-bottom: 24px;
-        }
-
-
-        .stat-card {
-
-            background: var(--white);
-
-            border: 1px solid var(--border);
-
-            border-radius: 15px;
-
-            padding: 18px;
-
-            box-shadow: var(--shadow);
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 13px;
-
-            transition: 0.25s ease;
-        }
-
-
-        .stat-card:hover {
-
-            transform: translateY(-2px);
-
-            box-shadow: var(--shadow-hover);
-        }
-
-
-        .stat-icon {
-
-            width: 47px;
-            height: 47px;
-
-            border-radius: 13px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 20px;
-
-            flex-shrink: 0;
-        }
-
-
-        .stat-icon.pink {
-
-            background: var(--light-pink);
-
-            color: var(--pink);
-        }
-
-
-        .stat-icon.orange {
-
-            background: var(--orange-light);
-
-            color: var(--orange);
-        }
-
-
-        .stat-icon.blue {
-
-            background: var(--blue-light);
-
-            color: var(--blue);
-        }
-
-
-        .stat-icon.green {
-
-            background: var(--green-light);
-
-            color: var(--green);
-        }
-
-
-        .stat-label {
-
-            font-size: 10px;
-
-            color: var(--brown-light);
-
-            font-weight: 600;
-
-            margin-bottom: 4px;
-        }
-
-
-        .stat-number {
-
-            font-size: 22px;
-
-            font-weight: 700;
-
-            color: var(--brown);
-
-            line-height: 1;
-        }
-
-
-        /* =====================================================
-           FILTER CARD
-           ===================================================== */
-
-        .filter-card {
-
-            background: var(--white);
-
-            border: 1px solid var(--border);
-
-            border-radius: 15px;
-
-            padding: 17px;
-
-            margin-bottom: 20px;
-
-            box-shadow: var(--shadow);
-        }
-
-
-        .filter-form {
-
-            display: grid;
-
-            grid-template-columns:
-                minmax(0, 1fr)
-                190px
-                auto
-                auto;
-
-            gap: 10px;
-
-            align-items: center;
-        }
-
-
-        .search-wrapper {
-
-            position: relative;
-        }
-
-
-        .search-icon {
-
-            position: absolute;
-
-            left: 13px;
-
-            top: 50%;
-
-            transform:
-                translateY(-50%);
-
-            color: #a99494;
-
-            font-size: 14px;
-
-            pointer-events: none;
-        }
-
-
-        .form-input,
-        .form-select {
-
-            width: 100%;
-
-            height: 43px;
-
-            border: 1px solid var(--border);
-
-            background: var(--cream);
-
-            border-radius: 9px;
+            gap: 7px;
 
             padding: 0 13px;
 
-            color: var(--brown);
-
-            outline: none;
-
-            font-size: 12px;
-
-            transition: 0.2s ease;
-        }
-
-
-        .search-input {
-
-            padding-left: 36px;
-        }
-
-
-        .form-input::placeholder {
-
-            color: #ad9999;
-        }
-
-
-        .form-input:focus,
-        .form-select:focus {
-
-            border-color: var(--pink);
-
-            background: var(--white);
-
-            box-shadow:
-                0 0 0 3px rgba(169, 103, 113, 0.08);
-        }
-
-
-        .filter-btn {
-
-            height: 43px;
-
-            padding: 0 17px;
-
-            border: none;
-
-            border-radius: 9px;
-
-            background: var(--pink);
-
-            color: white;
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-            transition: 0.25s ease;
-        }
-
-
-        .filter-btn:hover {
-
-            background: var(--dark-pink);
-
-            transform: translateY(-1px);
-        }
-
-
-        .clear-btn {
-
-            height: 43px;
-
-            padding: 0 15px;
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
-
             border: 1px solid var(--border);
-
-            border-radius: 9px;
-
-            background: var(--white);
-
-            color: var(--brown-light);
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            transition: 0.25s ease;
-        }
-
-
-        .clear-btn:hover {
-
-            background: var(--light-pink);
-
-            color: var(--dark-pink);
-
-            border-color: var(--soft-pink);
-        }
-
-
-        /* =====================================================
-           TABLE CARD
-           ===================================================== */
-
-        .table-card {
-
-            background: var(--white);
-
-            border: 1px solid var(--border);
-
-            border-radius: 15px;
-
-            box-shadow: var(--shadow);
-
-            overflow: hidden;
-        }
-
-
-        .table-header {
-
-            min-height: 66px;
-
-            padding: 15px 20px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            border-bottom: 1px solid var(--border);
-
-            gap: 15px;
-        }
-
-
-        .table-heading h3 {
-
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 18px;
-
-            color: var(--brown);
-        }
-
-
-        .table-heading p {
-
-            font-size: 11px;
-
-            color: var(--brown-light);
-
-            margin-top: 3px;
-        }
-
-
-        .result-count {
-
-            padding: 7px 11px;
-
             border-radius: 8px;
 
-            background: var(--light-pink);
-
-            color: var(--dark-pink);
+            background: white;
+            color: var(--brown);
 
             font-size: 11px;
-
             font-weight: 700;
 
-            white-space: nowrap;
+            transition: .2s ease;
         }
 
-
-        .table-wrapper {
-
-            width: 100%;
-
-            overflow-x: auto;
+        .view-store-btn:hover {
+            background: var(--light-pink);
+            color: var(--dark-pink);
         }
 
-
-        table {
-
-            width: 100%;
-
-            min-width: 1050px;
-
-            border-collapse: collapse;
-        }
-
-
-        thead th {
-
-            background: var(--cream);
-
-            color: var(--brown-light);
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            letter-spacing: 0.7px;
-
-            text-transform: uppercase;
-
-            text-align: left;
-
-            padding: 13px 16px;
-
-            border-bottom: 1px solid var(--border);
-
-            white-space: nowrap;
-        }
-
-
-        tbody td {
-
-            padding: 14px 16px;
-
-            border-bottom: 1px solid #f0e5e2;
-
-            font-size: 12px;
-
-            color: var(--brown);
-
-            vertical-align: middle;
-        }
-
-
-        tbody tr:last-child td {
-
-            border-bottom: none;
-        }
-
-
-        tbody tr {
-
-            transition: 0.2s ease;
-        }
-
-
-        tbody tr:hover {
-
-            background: #fffdfc;
-        }
-
-
-        /* =====================================================
-           ORDER ID
-           ===================================================== */
-
-        .order-id {
-
-            font-weight: 700;
-
-            color: var(--pink);
-
-            white-space: nowrap;
-        }
-
-
-        /* =====================================================
-           CUSTOMER
-           ===================================================== */
-
-        .customer-cell {
-
-            min-width: 190px;
-        }
-
-
-        .customer-name {
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            color: var(--brown);
-
-            margin-bottom: 3px;
-        }
-
-
-        .customer-email {
-
-            font-size: 10px;
-
-            color: var(--brown-light);
-
-            max-width: 190px;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-        }
-
-
-        /* =====================================================
-           PHONE
-           ===================================================== */
-
-        .phone {
-
-            color: var(--brown-light);
-
-            white-space: nowrap;
-        }
-
-
-        /* =====================================================
-           AMOUNT
-           ===================================================== */
-
-        .amount {
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            color: var(--brown);
-
-            white-space: nowrap;
-        }
-
-
-        /* =====================================================
-           PAYMENT STATUS
-           ===================================================== */
-
-        .payment-badge {
-
-            display: inline-flex;
-
+        .top-admin {
+            display: flex;
             align-items: center;
+            gap: 9px;
 
-            gap: 5px;
-
-            padding: 5px 9px;
-
-            border-radius: 7px;
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            white-space: nowrap;
+            padding-left: 13px;
+            border-left: 1px solid var(--border);
         }
 
-
-        .payment-paid {
-
-            background: var(--green-light);
-
-            color: var(--green);
-        }
-
-
-        .payment-pending {
-
-            background: var(--orange-light);
-
-            color: var(--orange);
-        }
-
-
-        .payment-failed {
-
-            background: var(--red-light);
-
-            color: var(--red);
-        }
-
-
-        /* =====================================================
-           ORDER STATUS
-           ===================================================== */
-
-        .status-badge {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 5px;
-
-            padding: 5px 9px;
-
-            border-radius: 7px;
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            white-space: nowrap;
-        }
-
-
-        .status-dot {
-
-            width: 6px;
-            height: 6px;
+        .top-admin-avatar {
+            width: 35px;
+            height: 35px;
 
             border-radius: 50%;
 
-            display: inline-block;
-        }
-
-
-        .status-pending {
-
-            background: var(--orange-light);
-
-            color: var(--orange);
-        }
-
-
-        .status-pending .status-dot {
-
-            background: var(--orange);
-        }
-
-
-        .status-confirmed {
-
-            background: var(--blue-light);
-
-            color: var(--blue);
-        }
-
-
-        .status-confirmed .status-dot {
-
-            background: var(--blue);
-        }
-
-
-        .status-processing {
-
-            background: var(--blue-light);
-
-            color: var(--blue);
-        }
-
-
-        .status-processing .status-dot {
-
-            background: var(--blue);
-        }
-
-
-        .status-shipped {
-
-            background: var(--light-pink);
-
-            color: var(--dark-pink);
-        }
-
-
-        .status-shipped .status-dot {
-
             background: var(--pink);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 12px;
+            font-weight: 700;
         }
 
-
-        .status-delivered {
-
-            background: var(--green-light);
-
-            color: var(--green);
-        }
-
-
-        .status-delivered .status-dot {
-
-            background: var(--green);
-        }
-
-
-        .status-cancelled {
-
-            background: var(--red-light);
-
-            color: var(--red);
-        }
-
-
-        .status-cancelled .status-dot {
-
-            background: var(--red);
-        }
-
-
-        /* =====================================================
-           DATE
-           ===================================================== */
-
-        .order-date {
-
-            white-space: nowrap;
-
-            color: var(--brown-light);
-
+        .top-admin-text strong {
+            display: block;
             font-size: 11px;
         }
 
-
-        /* =====================================================
-           VIEW BUTTON
-           ===================================================== */
-
-        .view-order-btn {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 5px;
-
-            padding: 7px 10px;
-
-            border-radius: 8px;
-
-            border: 1px solid var(--border);
-
-            background: var(--white);
-
-            color: var(--pink);
+        .top-admin-text span {
+            display: block;
+            margin-top: 2px;
 
             font-size: 10px;
-
-            font-weight: 700;
-
-            transition: 0.2s ease;
-
-            white-space: nowrap;
+            color: var(--brown-light);
         }
-
-
-        .view-order-btn:hover {
-
-            background: var(--light-pink);
-
-            border-color: var(--soft-pink);
-
-            color: var(--dark-pink);
-
-            transform: translateY(-1px);
-        }
-
 
         /* =====================================================
-           EMPTY STATE
-           ===================================================== */
+           CONTENT
+        ===================================================== */
 
-        .empty-state {
-
-            padding: 65px 25px;
-
-            text-align: center;
+        .content {
+            padding: 27px 28px 40px;
+            max-width: 1600px;
+            margin: auto;
         }
 
-
-        .empty-icon {
-
-            width: 68px;
-            height: 68px;
-
-            border-radius: 20px;
-
-            background: var(--light-pink);
-
-            color: var(--pink);
-
+        .page-header {
             display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
 
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 29px;
-
-            margin: 0 auto 15px;
+            margin-bottom: 22px;
         }
 
-
-        .empty-state h3 {
-
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 20px;
-
-            color: var(--brown);
+        .page-heading h1 {
+            font-family: "Playfair Display", serif;
+            font-size: 28px;
+            line-height: 1.2;
 
             margin-bottom: 6px;
         }
 
-
-        .empty-state p {
-
+        .page-heading p {
             font-size: 12px;
-
+            line-height: 1.6;
             color: var(--brown-light);
-
-            margin-bottom: 18px;
         }
 
+        /* =====================================================
+           STATISTICS
+        ===================================================== */
 
-        .empty-add-btn {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
 
-            display: inline-flex;
+            margin-bottom: 21px;
+        }
 
+        .stat-card {
+            min-width: 0;
+
+            display: flex;
             align-items: center;
+            gap: 12px;
 
-            gap: 7px;
+            padding: 17px;
 
-            padding: 10px 15px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
 
-            border-radius: 9px;
+            box-shadow: var(--shadow);
+
+            transition: .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+            font-size: 19px;
+        }
+
+        .stat-icon.pink {
+            background: var(--light-pink);
+            color: var(--pink);
+        }
+
+        .stat-icon.orange {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .stat-icon.blue {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .stat-icon.green {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .stat-label {
+            margin-bottom: 5px;
+
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--brown-light);
+        }
+
+        .stat-number {
+            font-size: 22px;
+            line-height: 1;
+            font-weight: 800;
+            color: var(--brown);
+        }
+
+        /* =====================================================
+           FILTER
+        ===================================================== */
+
+        .filter-card {
+            padding: 15px;
+            margin-bottom: 19px;
+
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .filter-form {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                175px
+                100px
+                75px;
+
+            gap: 9px;
+            align-items: center;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 13px;
+            color: #a99494;
+
+            pointer-events: none;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            height: 41px;
+
+            padding: 0 12px;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            background: var(--cream);
+            color: var(--brown);
+
+            outline: none;
+            font-size: 11px;
+
+            transition: .2s ease;
+        }
+
+        .search-input {
+            padding-left: 35px;
+        }
+
+        .form-input::placeholder {
+            color: #ad9999;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            background: white;
+            border-color: var(--pink);
+
+            box-shadow: 0 0 0 3px rgba(169,103,113,.08);
+        }
+
+        .filter-btn {
+            height: 41px;
+            padding: 0 14px;
+
+            border: 0;
+            border-radius: 8px;
 
             background: var(--pink);
-
             color: white;
 
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 700;
 
+            transition: .2s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--dark-pink);
+            transform: translateY(-1px);
+        }
+
+        .clear-btn {
+            height: 41px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            background: white;
+            color: var(--brown-light);
+
+            font-size: 11px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+        .clear-btn:hover {
+            background: var(--light-pink);
+            color: var(--dark-pink);
+        }
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .table-card {
+            overflow: hidden;
+
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .table-header {
+            min-height: 66px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+
+            padding: 14px 18px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-heading h3 {
+            font-family: "Playfair Display", serif;
+            font-size: 19px;
+        }
+
+        .table-heading p {
+            margin-top: 3px;
+            font-size: 10px;
+            color: var(--brown-light);
+        }
+
+        .result-count {
+            padding: 7px 11px;
+
+            border-radius: 7px;
+
+            background: var(--light-pink);
+            color: var(--dark-pink);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            min-width: 950px;
+
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 13px;
+
+            background: var(--cream);
+
+            color: var(--brown-light);
+            border-bottom: 1px solid var(--border);
+
+            text-align: left;
+
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 14px 13px;
+
+            border-bottom: 1px solid #f0e5e2;
+
+            color: var(--brown);
+            font-size: 11px;
+
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            transition: background .2s ease;
+        }
+
+        tbody tr:hover {
+            background: #fffdfc;
+        }
+
+        /* ORDER ID */
+
+        .order-id {
+            color: var(--pink);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* CUSTOMER */
+
+        .customer-cell {
+            min-width: 180px;
+        }
+
+        .customer-name {
+            margin-bottom: 4px;
+
+            font-size: 11px;
             font-weight: 700;
         }
 
+        .customer-email {
+            max-width: 180px;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            color: var(--brown-light);
+            font-size: 9px;
+        }
+
+        .phone {
+            color: var(--brown-light);
+            white-space: nowrap;
+            font-size: 10px;
+        }
+
+        /* AMOUNT */
+
+        .amount {
+            color: var(--brown);
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* PAYMENT */
+
+        .payment-badge {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 6px 9px;
+
+            border-radius: 6px;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .payment-paid {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .payment-pending {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .payment-failed {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        /* ORDER STATUS */
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            padding: 6px 9px;
+
+            border-radius: 6px;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-pending {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .status-pending .status-dot {
+            background: var(--orange);
+        }
+
+        .status-confirmed,
+        .status-processing {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .status-confirmed .status-dot,
+        .status-processing .status-dot {
+            background: var(--blue);
+        }
+
+        .status-shipped {
+            background: var(--light-pink);
+            color: var(--dark-pink);
+        }
+
+        .status-shipped .status-dot {
+            background: var(--pink);
+        }
+
+        .status-delivered {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .status-delivered .status-dot {
+            background: var(--green);
+        }
+
+        .status-cancelled {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        .status-cancelled .status-dot {
+            background: var(--red);
+        }
+
+        /* DATE */
+
+        .order-date {
+            color: var(--brown-light);
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        /* VIEW BUTTON */
+
+        .view-order-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+
+            padding: 7px 10px;
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            background: white;
+            color: var(--pink);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            white-space: nowrap;
+
+            transition: .2s ease;
+        }
+
+        .view-order-btn:hover {
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            border-color: var(--soft-pink);
+        }
+
+        /* =====================================================
+           EMPTY STATE AND ERRORS
+        ===================================================== */
+
+        .empty-state {
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+
+            margin: 0 auto 15px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 18px;
+
+            background: var(--light-pink);
+            color: var(--pink);
+
+            font-size: 27px;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 7px;
+
+            font-family: "Playfair Display", serif;
+            font-size: 20px;
+        }
+
+        .empty-state p {
+            margin-bottom: 17px;
+
+            color: var(--brown-light);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .empty-add-btn {
+            display: inline-flex;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            background: var(--pink);
+            color: white;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
 
         .empty-add-btn:hover {
-
             background: var(--dark-pink);
         }
 
+        .error-message {
+            padding: 17px;
+
+            margin-bottom: 18px;
+
+            border: 1px solid #efcaca;
+            border-radius: 10px;
+
+            background: var(--red-light);
+            color: var(--red);
+
+            font-size: 12px;
+            line-height: 1.6;
+        }
 
         /* =====================================================
-           SIDEBAR OVERLAY
-           ===================================================== */
+           PAGINATION
+        ===================================================== */
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+
+            padding: 16px 18px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .pagination-info {
+            color: var(--brown-light);
+            font-size: 10px;
+        }
+
+        .pagination-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .page-link {
+            min-width: 31px;
+            height: 31px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 8px;
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            background: white;
+            color: var(--brown-light);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+        .page-link:hover {
+            background: var(--light-pink);
+            color: var(--dark-pink);
+        }
+
+        .page-link.active {
+            background: var(--pink);
+            border-color: var(--pink);
+            color: white;
+        }
+
+        .page-link.disabled {
+            opacity: .4;
+            pointer-events: none;
+        }
+
+        /* =====================================================
+           OVERLAY
+        ===================================================== */
 
         .sidebar-overlay {
-
             display: none;
 
             position: fixed;
-
             inset: 0;
 
-            background:
-                rgba(81, 61, 61, 0.35);
+            background: rgba(81,61,61,.4);
 
             z-index: 900;
         }
 
-
         /* =====================================================
            TABLET
-           ===================================================== */
+        ===================================================== */
 
         @media (max-width: 1100px) {
 
             :root {
-
-                --sidebar-width: 235px;
+                --sidebar-width: 225px;
             }
-
 
             .content {
-
-                padding: 24px;
+                padding: 23px 20px 35px;
             }
 
+            .topbar {
+                padding: 0 20px;
+            }
 
             .stats-grid {
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-            }
-
-
-            .filter-form {
-
-                grid-template-columns:
-                    minmax(0, 1fr)
-                    170px
-                    auto;
-            }
-
-
-            .clear-btn {
-
-                grid-column: 3;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
-
-        /* =====================================================
-           MOBILE
-           ===================================================== */
-
-        @media (max-width: 800px) {
+        @media (max-width: 850px) {
 
             .sidebar {
-
-                transform:
-                    translateX(-100%);
+                transform: translateX(-100%);
             }
-
 
             .sidebar.open {
-
-                transform:
-                    translateX(0);
+                transform: translateX(0);
             }
 
-
             .sidebar-overlay.show {
-
                 display: block;
             }
 
-
             .main {
-
                 margin-left: 0;
             }
 
-
             .mobile-menu-btn {
-
                 display: flex;
-
                 align-items: center;
-
                 justify-content: center;
             }
 
-
             .topbar {
-
-                height: 70px;
-
-                padding: 0 18px;
+                height: 66px;
+                padding: 0 17px;
             }
-
 
             .topbar-title h2 {
-
-                font-size: 20px;
+                font-size: 22px;
             }
-
 
             .topbar-title p {
-
                 display: none;
             }
-
 
             .view-store-btn {
-
                 display: none;
             }
 
-
             .top-admin {
-
                 border-left: none;
-
                 padding-left: 0;
             }
 
-
             .top-admin-text {
-
                 display: none;
             }
 
-
             .content {
-
-                padding: 20px 16px 30px;
+                padding: 21px 17px 30px;
             }
-
-
-            .page-header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-            }
-
-
-            .page-heading h1 {
-
-                font-size: 27px;
-            }
-
-
-            .new-order-btn {
-
-                width: 100%;
-
-                justify-content: center;
-            }
-
-
-            .stats-grid {
-
-                grid-template-columns: 1fr;
-
-                gap: 10px;
-            }
-
 
             .filter-form {
-
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 150px;
             }
-
-
-            .clear-btn {
-
-                grid-column: auto;
-            }
-
 
             .filter-btn,
             .clear-btn {
-
                 width: 100%;
-            }
-
-
-            .table-header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-            }
-
-
-            .result-count {
-
-                align-self: flex-start;
             }
         }
 
-
         /* =====================================================
-           SMALL MOBILE
-           ===================================================== */
+           MOBILE
+        ===================================================== */
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
 
             .topbar {
-
                 padding: 0 13px;
             }
 
-
             .topbar-title h2 {
-
-                font-size: 18px;
+                font-size: 20px;
             }
-
 
             .content {
-
-                padding: 17px 12px 25px;
+                padding: 18px 13px 25px;
             }
-
 
             .page-heading h1 {
-
-                font-size: 25px;
+                font-size: 24px;
             }
-
 
             .page-heading p {
-
-                font-size: 12px;
+                font-size: 11px;
             }
 
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
 
             .stat-card {
-
                 padding: 14px;
             }
 
-
-            .stat-icon {
-
-                width: 44px;
-                height: 44px;
+            .filter-card {
+                padding: 11px;
             }
 
+            .filter-form {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 14px;
+            }
+
+            .pagination {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .pagination-links {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            .brand-title {
+                font-size: 17px;
+            }
+
+            .topbar-title h2 {
+                font-size: 18px;
+            }
+
+            .content {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .page-heading h1 {
+                font-size: 22px;
+            }
 
             .stat-number {
-
-                font-size: 21px;
+                font-size: 20px;
             }
         }
 
@@ -2143,19 +1775,13 @@ $conn->close();
 
 </head>
 
-
 <body>
-
 
 <!-- =========================================================
      SIDEBAR
-     ========================================================= -->
+========================================================= -->
 
-<aside class="sidebar"
-       id="sidebar">
-
-
-    <!-- BRAND -->
+<aside class="sidebar" id="sidebar">
 
     <div class="sidebar-brand">
 
@@ -2177,13 +1803,9 @@ $conn->close();
 
     </div>
 
-
     <!-- NAVIGATION -->
 
     <div class="sidebar-content">
-
-
-        <!-- MAIN MENU -->
 
         <div class="nav-section">
 
@@ -2191,52 +1813,35 @@ $conn->close();
                 Main Menu
             </div>
 
+            <a href="dashboard.php" class="nav-link">
 
-            <a href="dashboard.php"
-               class="nav-link">
-
-                <span class="nav-icon">
-                    🏠
-                </span>
-
-                <span>
-                    Dashboard
-                </span>
+                <span class="nav-icon">🏠</span>
+                <span>Dashboard</span>
 
             </a>
 
+            <a href="products.php" class="nav-link">
 
-            <a href="products.php"
-               class="nav-link">
-
-                <span class="nav-icon">
-                    🛍️
-                </span>
-
-                <span>
-                    Products
-                </span>
+                <span class="nav-icon">🛍️</span>
+                <span>Products</span>
 
             </a>
 
+            <a href="orders.php" class="nav-link active" aria-current="page">
 
-            <a href="orders.php"
-               class="nav-link active">
+                <span class="nav-icon">📦</span>
+                <span>Orders</span>
 
-                <span class="nav-icon">
-                    📦
-                </span>
+            </a>
 
-                <span>
-                    Orders
-                </span>
+            <a href="message.php" class="nav-link">
+
+                <span class="nav-icon">💌</span>
+                <span>Messages</span>
 
             </a>
 
         </div>
-
-
-        <!-- MANAGEMENT -->
 
         <div class="nav-section">
 
@@ -2244,46 +1849,24 @@ $conn->close();
                 Management
             </div>
 
+            <a href="products.php" class="nav-link">
 
-            <a href="products.php"
-               class="nav-link">
-
-                <span class="nav-icon">
-                    📊
-                </span>
-
-                <span>
-                    Inventory
-                </span>
+                <span class="nav-icon">📊</span>
+                <span>Inventory</span>
 
             </a>
 
+            <a href="../index.html" class="nav-link" target="_blank" rel="noopener noreferrer">
 
-            <a href="../index.html"
-               class="nav-link"
-               target="_blank">
-
-                <span class="nav-icon">
-                    👁️
-                </span>
-
-                <span>
-                    View Store
-                </span>
+                <span class="nav-icon">👁️</span>
+                <span>View Store</span>
 
             </a>
 
+            <a href="add-product.php" class="nav-link">
 
-            <a href="add-product.php"
-               class="nav-link">
-
-                <span class="nav-icon">
-                    ➕
-                </span>
-
-                <span>
-                    Add Product
-                </span>
+                <span class="nav-icon">➕</span>
+                <span>Add Product</span>
 
             </a>
 
@@ -2291,30 +1874,20 @@ $conn->close();
 
     </div>
 
-
-    <!-- ADMIN -->
+    <!-- ADMIN PROFILE -->
 
     <div class="sidebar-bottom">
 
         <div class="admin-mini">
 
             <div class="admin-avatar">
-
-                <?php
-                echo htmlspecialchars($adminInitial);
-                ?>
-
+                <?php echo e($adminInitial); ?>
             </div>
-
 
             <div class="admin-info">
 
                 <div class="admin-name">
-
-                    <?php
-                    echo htmlspecialchars($adminName);
-                    ?>
-
+                    <?php echo e($adminName); ?>
                 </div>
 
                 <div class="admin-role">
@@ -2323,18 +1896,14 @@ $conn->close();
 
             </div>
 
-
-            <a href="logout.php"
-               class="logout-link"
-               title="Logout"
-               onclick="
-                   return confirm(
-                       'Are you sure you want to logout?'
-                   );
-               ">
-
+            <a
+                href="logout.php"
+                class="logout-link"
+                title="Logout"
+                aria-label="Logout"
+                onclick="return confirm('Are you sure you want to logout?');"
+            >
                 ↪
-
             </a>
 
         </div>
@@ -2343,98 +1912,71 @@ $conn->close();
 
 </aside>
 
+<!-- SIDEBAR OVERLAY -->
 
-<!-- OVERLAY -->
-
-<div class="sidebar-overlay"
-     id="sidebarOverlay"
-     onclick="closeSidebar()">
-</div>
-
-
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+    onclick="closeSidebar()"
+></div>
 
 <!-- =========================================================
-     MAIN
-     ========================================================= -->
+     MAIN CONTENT
+========================================================= -->
 
 <main class="main">
 
-
-    <!-- =====================================================
-         TOPBAR
-         ===================================================== -->
+    <!-- TOPBAR -->
 
     <header class="topbar">
 
-
         <div class="topbar-left">
 
-
             <button
+                type="button"
                 class="mobile-menu-btn"
                 onclick="toggleSidebar()"
-                aria-label="Open menu">
-
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                id="menuButton"
+            >
                 ☰
-
             </button>
-
 
             <div class="topbar-title">
 
-                <h2>
-                    Orders
-                </h2>
+                <h2>Orders</h2>
 
-                <p>
-                    Manage customer orders
-                </p>
+                <p>Manage customer orders</p>
 
             </div>
 
         </div>
 
-
         <div class="topbar-right">
 
-
-            <a href="../index.html"
-               class="view-store-btn"
-               target="_blank">
-
-                👁️
-
-                <span>
-                    View Store
-                </span>
-
+            <a
+                href="../index.html"
+                class="view-store-btn"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                👁️ View Store
             </a>
-
 
             <div class="top-admin">
 
                 <div class="top-admin-avatar">
-
-                    <?php
-                    echo htmlspecialchars($adminInitial);
-                    ?>
-
+                    <?php echo e($adminInitial); ?>
                 </div>
-
 
                 <div class="top-admin-text">
 
                     <strong>
-
-                        <?php
-                        echo htmlspecialchars($adminName);
-                        ?>
-
+                        <?php echo e($adminName); ?>
                     </strong>
 
-                    <span>
-                        Administrator
-                    </span>
+                    <span>Administrator</span>
 
                 </div>
 
@@ -2444,43 +1986,52 @@ $conn->close();
 
     </header>
 
-
-
-    <!-- =====================================================
-         CONTENT
-         ===================================================== -->
+    <!-- PAGE CONTENT -->
 
     <section class="content">
 
-
-        <!-- PAGE HEADER -->
+        <!-- PAGE HEADING -->
 
         <div class="page-header">
 
             <div class="page-heading">
 
-                <h1>
-                    Order Management
-                </h1>
+                <h1>Order Management</h1>
 
                 <p>
-                    View and manage all customer orders
-                    from your crochet store.
+                    View, search and manage all customer orders from your crochet store.
                 </p>
 
             </div>
 
-
         </div>
 
+        <!-- DATABASE ERROR -->
 
+        <?php if ($dbError !== ""): ?>
 
-        <!-- =================================================
-             STATISTICS
-             ================================================= -->
+            <div class="error-message">
+                ⚠️ <?php echo e($dbError); ?>
+            </div>
+
+        <?php endif; ?>
+
+        <?php if ($dbError === "" && !$tableExists): ?>
+
+            <div class="error-message">
+                ⚠️ Orders table was not found in the knot_house database.
+                Please check your database.
+            </div>
+
+        <?php endif; ?>
+
+        <?php if ($tableExists && $dbError === ""): ?>
+
+        <!-- =============================================
+             ORDER STATISTICS
+        ============================================== -->
 
         <div class="stats-grid">
-
 
             <!-- TOTAL ORDERS -->
 
@@ -2497,19 +2048,14 @@ $conn->close();
                     </div>
 
                     <div class="stat-number">
-
-                        <?php
-                        echo number_format($totalOrders);
-                        ?>
-
+                        <?php echo number_format($totalOrders); ?>
                     </div>
 
                 </div>
 
             </div>
 
-
-            <!-- PENDING -->
+            <!-- PENDING ORDERS -->
 
             <div class="stat-card">
 
@@ -2524,19 +2070,14 @@ $conn->close();
                     </div>
 
                     <div class="stat-number">
-
-                        <?php
-                        echo number_format($pendingOrders);
-                        ?>
-
+                        <?php echo number_format($pendingOrders); ?>
                     </div>
 
                 </div>
 
             </div>
 
-
-            <!-- PROCESSING -->
+            <!-- PROCESSING ORDERS -->
 
             <div class="stat-card">
 
@@ -2551,19 +2092,14 @@ $conn->close();
                     </div>
 
                     <div class="stat-number">
-
-                        <?php
-                        echo number_format($processingOrders);
-                        ?>
-
+                        <?php echo number_format($processingOrders); ?>
                     </div>
 
                 </div>
 
             </div>
 
-
-            <!-- DELIVERED -->
+            <!-- DELIVERED ORDERS -->
 
             <div class="stat-card">
 
@@ -2578,11 +2114,7 @@ $conn->close();
                     </div>
 
                     <div class="stat-number">
-
-                        <?php
-                        echo number_format($deliveredOrders);
-                        ?>
-
+                        <?php echo number_format($deliveredOrders); ?>
                     </div>
 
                 </div>
@@ -2591,19 +2123,17 @@ $conn->close();
 
         </div>
 
-
-
-        <!-- =================================================
-             SEARCH & FILTER
-             ================================================= -->
+        <!-- =============================================
+             SEARCH AND FILTER
+        ============================================== -->
 
         <div class="filter-card">
 
             <form
                 method="GET"
                 action="orders.php"
-                class="filter-form">
-
+                class="filter-form"
+            >
 
                 <!-- SEARCH -->
 
@@ -2617,75 +2147,56 @@ $conn->close();
                         type="text"
                         name="search"
                         class="form-input search-input"
-                        placeholder="Search by order ID, customer, email or phone..."
-                        value="<?php
-                            echo htmlspecialchars($search);
-                        ?>"
+                        placeholder="Search order ID, customer, email or phone..."
+                        value="<?php echo e($search); ?>"
+                        maxlength="100"
                     >
 
                 </div>
 
-
-                <!-- STATUS -->
+                <!-- STATUS FILTER -->
 
                 <select
                     name="status"
-                    class="form-select">
+                    class="form-select"
+                    aria-label="Filter by order status"
+                >
 
                     <option value="">
                         All Statuses
                     </option>
 
-
                     <?php foreach ($orderStatuses as $orderStatus): ?>
 
                         <option
-                            value="<?php
-                                echo htmlspecialchars($orderStatus);
-                            ?>"
-                            <?php
-                                echo (
-                                    $status === $orderStatus
-                                )
-                                ? "selected"
-                                : "";
-                            ?>>
-
-                            <?php
-                            echo htmlspecialchars($orderStatus);
-                            ?>
-
+                            value="<?php echo e($orderStatus); ?>"
+                            <?php echo ($status === $orderStatus) ? "selected" : ""; ?>
+                        >
+                            <?php echo e($orderStatus); ?>
                         </option>
 
                     <?php endforeach; ?>
 
                 </select>
 
-
-                <!-- FILTER -->
+                <!-- FILTER BUTTON -->
 
                 <button
                     type="submit"
-                    class="filter-btn">
-
+                    class="filter-btn"
+                >
                     🔍 Filter
-
                 </button>
 
+                <!-- CLEAR BUTTON -->
 
-                <!-- CLEAR -->
-
-                <?php if (
-                    $search !== "" ||
-                    $status !== ""
-                ): ?>
+                <?php if ($search !== "" || $status !== ""): ?>
 
                     <a
                         href="orders.php"
-                        class="clear-btn">
-
+                        class="clear-btn"
+                    >
                         Clear
-
                     </a>
 
                 <?php else: ?>
@@ -2698,24 +2209,17 @@ $conn->close();
 
         </div>
 
-
-
-        <!-- =================================================
+        <!-- =============================================
              ORDERS TABLE
-             ================================================= -->
+        ============================================== -->
 
         <div class="table-card">
-
-
-            <!-- TABLE HEADER -->
 
             <div class="table-header">
 
                 <div class="table-heading">
 
-                    <h3>
-                        All Orders
-                    </h3>
+                    <h3>All Orders</h3>
 
                     <p>
                         Customer orders and payment details
@@ -2723,52 +2227,19 @@ $conn->close();
 
                 </div>
 
-
                 <div class="result-count">
 
-                    <?php
-                    echo count($orders);
-                    ?>
+                    <?php echo number_format($totalRecords); ?>
 
-                    <?php
-                    echo count($orders) == 1
-                        ? "Order"
-                        : "Orders";
-                    ?>
+                    <?php echo ($totalRecords === 1) ? "Order" : "Orders"; ?>
 
                 </div>
 
             </div>
 
+            <!-- EMPTY STATE -->
 
-
-            <?php if (!$tableExists): ?>
-
-
-                <!-- DATABASE EMPTY -->
-
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        🗄️
-                    </div>
-
-                    <h3>
-                        Orders Table Not Found
-                    </h3>
-
-                    <p>
-                        Please create the orders table
-                        in the knot_house database.
-                    </p>
-
-                </div>
-
-
-            <?php elseif (empty($orders)): ?>
-
-
-                <!-- NO ORDERS -->
+            <?php if (empty($orders)): ?>
 
                 <div class="empty-state">
 
@@ -2776,19 +2247,13 @@ $conn->close();
                         📦
                     </div>
 
-                    <h3>
-                        No Orders Found
-                    </h3>
+                    <h3>No Orders Found</h3>
 
                     <p>
 
-                        <?php if (
-                            $search !== "" ||
-                            $status !== ""
-                        ): ?>
+                        <?php if ($search !== "" || $status !== ""): ?>
 
-                            No orders match your
-                            current search or filter.
+                            No orders match your current search or filter.
 
                         <?php else: ?>
 
@@ -2798,423 +2263,206 @@ $conn->close();
 
                     </p>
 
-
-                    <?php if (
-                        $search !== "" ||
-                        $status !== ""
-                    ): ?>
+                    <?php if ($search !== "" || $status !== ""): ?>
 
                         <a
                             href="orders.php"
-                            class="empty-add-btn">
-
+                            class="empty-add-btn"
+                        >
                             View All Orders
-
                         </a>
 
                     <?php endif; ?>
 
                 </div>
 
-
             <?php else: ?>
 
-
-                <!-- =================================================
-                     ORDERS TABLE
-                     ================================================= -->
+                <!-- ORDERS TABLE -->
 
                 <div class="table-wrapper">
 
                     <table>
 
-
                         <thead>
 
                             <tr>
 
-                                <th>
-                                    Order ID
-                                </th>
+                                <th>Order ID</th>
 
-                                <th>
-                                    Customer
-                                </th>
+                                <th>Customer</th>
 
-                                <th>
-                                    Phone
-                                </th>
+                                <th>Phone</th>
 
-                                <th>
-                                    Date
-                                </th>
+                                <th>Date</th>
 
-                                <th>
-                                    Total
-                                </th>
+                                <th>Total</th>
 
-                                <th>
-                                    Payment
-                                </th>
+                                <th>Payment</th>
 
-                                <th>
-                                    Status
-                                </th>
+                                <th>Status</th>
 
-                                <th>
-                                    Action
-                                </th>
+                                <th>Action</th>
 
                             </tr>
 
                         </thead>
 
-
                         <tbody>
 
+                            <?php foreach ($orders as $order): ?>
 
-                        <?php foreach (
-                            $orders as $order
-                        ): ?>
+                                <?php
 
+                                $orderId = (int)$order["id"];
 
-                            <?php
+                                $customerName = $order["customer_name"] ?? "Customer";
 
-                            /* ---------------------------------
-                               ORDER VALUES
-                               --------------------------------- */
+                                $customerEmail = $order["customer_email"] ?? "";
 
-                            $orderId =
-                                (int)(
-                                    $order["id"] ?? 0
-                                );
+                                $customerPhone = $order["customer_phone"] ?? "";
 
-                            $customerName =
-                                $order["customer_name"]
-                                ?? "Customer";
+                                $totalAmount = (float)($order["total_amount"] ?? 0);
 
-                            $customerEmail =
-                                $order["customer_email"]
-                                ?? "";
+                                $paymentStatus = $order["payment_status"] ?? "Pending";
 
-                            $customerPhone =
-                                $order["customer_phone"]
-                                ?? "";
+                                $orderStatus = $order["order_status"] ?? "Pending";
 
-                            $totalAmount =
-                                (float)(
-                                    $order["total_amount"]
-                                    ?? 0
-                                );
+                                $createdAt = $order["created_at"] ?? "";
 
-                            $paymentMethod =
-                                $order["payment_method"]
-                                ?? "Cash on Delivery";
+                                /* FORMAT DATE */
 
-                            $paymentStatus =
-                                $order["payment_status"]
-                                ?? "Pending";
+                                $formattedDate = "—";
 
-                            $orderStatus =
-                                $order["order_status"]
-                                ?? "Pending";
+                                if ($createdAt !== "") {
 
-                            $createdAt =
-                                $order["created_at"]
-                                ?? "";
+                                    $timestamp = strtotime($createdAt);
 
+                                    if ($timestamp !== false) {
 
-                            /* ---------------------------------
-                               DATE FORMAT
-                               --------------------------------- */
-
-                            $formattedDate = "";
-
-                            if ($createdAt !== "") {
-
-                                $time =
-                                    strtotime($createdAt);
-
-                                if ($time !== false) {
-
-                                    $formattedDate =
-                                        date(
+                                        $formattedDate = date(
                                             "d M Y",
-                                            $time
+                                            $timestamp
                                         );
+
+                                    }
                                 }
-                            }
 
+                                /* STATUS CLASS */
 
-                            /* ---------------------------------
-                               ORDER STATUS CLASS
-                               --------------------------------- */
+                                $statusClass = getStatusClass($orderStatus);
 
-                            $statusClass =
-                                "status-pending";
+                                /* PAYMENT CLASS */
 
-                            switch (
-                                strtolower($orderStatus)
-                            ) {
+                                $paymentClass = getPaymentClass($paymentStatus);
 
-                                case "confirmed":
+                                ?>
 
-                                    $statusClass =
-                                        "status-confirmed";
+                                <tr>
 
-                                    break;
+                                    <!-- ORDER ID -->
 
-                                case "processing":
+                                    <td>
 
-                                    $statusClass =
-                                        "status-processing";
-
-                                    break;
-
-                                case "shipped":
-
-                                    $statusClass =
-                                        "status-shipped";
-
-                                    break;
-
-                                case "delivered":
-
-                                    $statusClass =
-                                        "status-delivered";
-
-                                    break;
-
-                                case "cancelled":
-
-                                    $statusClass =
-                                        "status-cancelled";
-
-                                    break;
-
-                                default:
-
-                                    $statusClass =
-                                        "status-pending";
-                            }
-
-
-                            /* ---------------------------------
-                               PAYMENT CLASS
-                               --------------------------------- */
-
-                            $paymentClass =
-                                "payment-pending";
-
-                            $paymentLower =
-                                strtolower(
-                                    $paymentStatus
-                                );
-
-                            if (
-                                $paymentLower === "paid" ||
-                                $paymentLower === "completed"
-                            ) {
-
-                                $paymentClass =
-                                    "payment-paid";
-
-                            } elseif (
-                                $paymentLower === "failed"
-                            ) {
-
-                                $paymentClass =
-                                    "payment-failed";
-                            }
-
-                            ?>
-
-
-                            <tr>
-
-
-                                <!-- ORDER ID -->
-
-                                <td>
-
-                                    <span class="order-id">
-
-                                        #<?php
-                                        echo $orderId;
-                                        ?>
-
-                                    </span>
-
-                                </td>
-
-
-
-                                <!-- CUSTOMER -->
-
-                                <td>
-
-                                    <div class="customer-cell">
-
-                                        <div class="customer-name">
-
-                                            <?php
-                                            echo htmlspecialchars(
-                                                $customerName
-                                            );
-                                            ?>
-
-                                        </div>
-
-
-                                        <div
-                                            class="customer-email"
-                                            title="<?php
-                                                echo htmlspecialchars(
-                                                    $customerEmail
-                                                );
-                                            ?>">
-
-                                            <?php
-                                            echo htmlspecialchars(
-                                                $customerEmail
-                                            );
-                                            ?>
-
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-
-                                <!-- PHONE -->
-
-                                <td>
-
-                                    <span class="phone">
-
-                                        <?php
-                                        echo htmlspecialchars(
-                                            $customerPhone
-                                        );
-                                        ?>
-
-                                    </span>
-
-                                </td>
-
-
-
-                                <!-- DATE -->
-
-                                <td>
-
-                                    <span class="order-date">
-
-                                        <?php
-                                        echo htmlspecialchars(
-                                            $formattedDate
-                                        );
-                                        ?>
-
-                                    </span>
-
-                                </td>
-
-
-
-                                <!-- TOTAL -->
-
-                                <td>
-
-                                    <span class="amount">
-
-                                        ₹<?php
-                                        echo number_format(
-                                            $totalAmount,
-                                            2
-                                        );
-                                        ?>
-
-                                    </span>
-
-                                </td>
-
-
-
-                                <!-- PAYMENT -->
-
-                                <td>
-
-                                    <span
-                                        class="payment-badge
-                                        <?php
-                                        echo $paymentClass;
-                                        ?>">
-
-                                        <?php
-                                        echo htmlspecialchars(
-                                            $paymentStatus
-                                        );
-                                        ?>
-
-                                    </span>
-
-                                </td>
-
-
-
-                                <!-- ORDER STATUS -->
-
-                                <td>
-
-                                    <span
-                                        class="status-badge
-                                        <?php
-                                        echo $statusClass;
-                                        ?>">
-
-                                        <span
-                                            class="status-dot">
+                                        <span class="order-id">
+                                            #<?php echo $orderId; ?>
                                         </span>
 
-                                        <?php
-                                        echo htmlspecialchars(
-                                            $orderStatus
-                                        );
-                                        ?>
+                                    </td>
 
-                                    </span>
+                                    <!-- CUSTOMER -->
 
-                                </td>
+                                    <td>
 
+                                        <div class="customer-cell">
 
+                                            <div class="customer-name">
+                                                <?php echo e($customerName); ?>
+                                            </div>
 
-                                <!-- ACTION -->
+                                            <div
+                                                class="customer-email"
+                                                title="<?php echo e($customerEmail); ?>"
+                                            >
+                                                <?php echo e($customerEmail); ?>
+                                            </div>
 
-                                <td>
+                                        </div>
 
-                                    <a
-                                        href="order.php?id=<?php
-                                            echo $orderId;
-                                        ?>"
-                                        class="view-order-btn">
+                                    </td>
 
-                                        👁️
+                                    <!-- PHONE -->
 
-                                        View Order
+                                    <td>
 
-                                    </a>
+                                        <span class="phone">
+                                            <?php echo e($customerPhone !== "" ? $customerPhone : "—"); ?>
+                                        </span>
 
-                                </td>
+                                    </td>
 
+                                    <!-- DATE -->
 
-                            </tr>
+                                    <td>
 
+                                        <span class="order-date">
+                                            <?php echo e($formattedDate); ?>
+                                        </span>
 
-                        <?php endforeach; ?>
+                                    </td>
 
+                                    <!-- TOTAL -->
+
+                                    <td>
+
+                                        <span class="amount">
+                                            ₹<?php echo number_format($totalAmount, 2); ?>
+                                        </span>
+
+                                    </td>
+
+                                    <!-- PAYMENT -->
+
+                                    <td>
+
+                                        <span class="payment-badge payment-<?php echo e($paymentClass); ?>">
+
+                                            <?php echo e($paymentStatus); ?>
+
+                                        </span>
+
+                                    </td>
+
+                                    <!-- STATUS -->
+
+                                    <td>
+
+                                        <span class="status-badge status-<?php echo e($statusClass); ?>">
+
+                                            <span class="status-dot"></span>
+
+                                            <?php echo e($orderStatus); ?>
+
+                                        </span>
+
+                                    </td>
+
+                                    <!-- ACTION -->
+
+                                    <td>
+
+                                        <a
+                                            href="order.php?id=<?php echo $orderId; ?>"
+                                            class="view-order-btn"
+                                        >
+                                            👁️ View Order
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php endforeach; ?>
 
                         </tbody>
 
@@ -3222,115 +2470,217 @@ $conn->close();
 
                 </div>
 
-            <?php endif; ?>
+                <!-- =====================================
+                     PAGINATION
+                ====================================== -->
 
+                <?php if ($totalPages > 1): ?>
+
+                    <div class="pagination">
+
+                        <div class="pagination-info">
+
+                            Showing
+
+                            <?php echo number_format($offset + 1); ?>
+
+                            to
+
+                            <?php echo number_format(min($offset + count($orders), $totalRecords)); ?>
+
+                            of
+
+                            <?php echo number_format($totalRecords); ?>
+
+                            orders
+
+                        </div>
+
+                        <div class="pagination-links">
+
+                            <!-- PREVIOUS -->
+
+                            <a
+                                href="<?php echo e(pageUrl($currentPage - 1, $search, $status)); ?>"
+                                class="page-link <?php echo ($currentPage <= 1) ? "disabled" : ""; ?>"
+                                aria-label="Previous page"
+                            >
+                                ‹
+                            </a>
+
+                            <!-- PAGE NUMBERS -->
+
+                            <?php
+
+                            $startPage = max(1, $currentPage - 2);
+
+                            $endPage = min(
+                                $totalPages,
+                                $currentPage + 2
+                            );
+
+                            ?>
+
+                            <?php if ($startPage > 1): ?>
+
+                                <a
+                                    href="<?php echo e(pageUrl(1, $search, $status)); ?>"
+                                    class="page-link"
+                                >
+                                    1
+                                </a>
+
+                                <?php if ($startPage > 2): ?>
+
+                                    <span>...</span>
+
+                                <?php endif; ?>
+
+                            <?php endif; ?>
+
+                            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+
+                                <a
+                                    href="<?php echo e(pageUrl($i, $search, $status)); ?>"
+                                    class="page-link <?php echo ($currentPage === $i) ? "active" : ""; ?>"
+                                    <?php echo ($currentPage === $i) ? 'aria-current="page"' : ""; ?>
+                                >
+                                    <?php echo $i; ?>
+                                </a>
+
+                            <?php endfor; ?>
+
+                            <?php if ($endPage < $totalPages): ?>
+
+                                <?php if ($endPage < $totalPages - 1): ?>
+
+                                    <span>...</span>
+
+                                <?php endif; ?>
+
+                                <a
+                                    href="<?php echo e(pageUrl($totalPages, $search, $status)); ?>"
+                                    class="page-link"
+                                >
+                                    <?php echo $totalPages; ?>
+                                </a>
+
+                            <?php endif; ?>
+
+                            <!-- NEXT -->
+
+                            <a
+                                href="<?php echo e(pageUrl($currentPage + 1, $search, $status)); ?>"
+                                class="page-link <?php echo ($currentPage >= $totalPages) ? "disabled" : ""; ?>"
+                                aria-label="Next page"
+                            >
+                                ›
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                <?php endif; ?>
+
+            <?php endif; ?>
 
         </div>
 
+        <?php endif; ?>
 
     </section>
 
 </main>
 
-
-
 <!-- =========================================================
      JAVASCRIPT
-     ========================================================= -->
+========================================================= -->
 
 <script>
 
+    const sidebar = document.getElementById("sidebar");
 
-    /* =====================================================
-       SIDEBAR ELEMENTS
-       ===================================================== */
+    const overlay = document.getElementById("sidebarOverlay");
 
-    const sidebar =
-        document.getElementById("sidebar");
-
-    const overlay =
-        document.getElementById("sidebarOverlay");
+    const menuButton = document.getElementById("menuButton");
 
 
-    /* =====================================================
-       OPEN / CLOSE SIDEBAR
-       ===================================================== */
+    /* OPEN SIDEBAR */
 
     function toggleSidebar() {
 
-        sidebar.classList.toggle("open");
+        const isOpen = sidebar.classList.toggle("open");
 
-        overlay.classList.toggle("show");
+        overlay.classList.toggle("show", isOpen);
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            isOpen ? "true" : "false"
+        );
+
     }
 
+
+    /* CLOSE SIDEBAR */
 
     function closeSidebar() {
 
         sidebar.classList.remove("open");
 
         overlay.classList.remove("show");
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
     }
 
 
-    /* =====================================================
-       CLOSE SIDEBAR AFTER CLICK
-       ===================================================== */
+    /* CLOSE WHEN CLICKING NAVIGATION */
 
-    const navLinks =
-        document.querySelectorAll(".nav-link");
+    document.querySelectorAll(".nav-link").forEach(function(link) {
 
-    navLinks.forEach(function(link) {
+        link.addEventListener("click", function() {
 
-        link.addEventListener(
-            "click",
-            function() {
+            if (window.innerWidth <= 850) {
 
-                if (window.innerWidth <= 800) {
-
-                    closeSidebar();
-                }
+                closeSidebar();
 
             }
-        );
+
+        });
 
     });
 
 
-    /* =====================================================
-       ESCAPE KEY
-       ===================================================== */
+    /* CLOSE WITH ESCAPE KEY */
 
-    document.addEventListener(
-        "keydown",
-        function(event) {
+    document.addEventListener("keydown", function(event) {
 
-            if (event.key === "Escape") {
+        if (event.key === "Escape") {
 
-                closeSidebar();
-            }
+            closeSidebar();
 
         }
-    );
+
+    });
 
 
-    /* =====================================================
-       RESIZE
-       ===================================================== */
+    /* CLOSE SIDEBAR ON DESKTOP RESIZE */
 
-    window.addEventListener(
-        "resize",
-        function() {
+    window.addEventListener("resize", function() {
 
-            if (window.innerWidth > 800) {
+        if (window.innerWidth > 850) {
 
-                closeSidebar();
-            }
+            closeSidebar();
 
         }
-    );
+
+    });
 
 </script>
-
 
 </body>
 

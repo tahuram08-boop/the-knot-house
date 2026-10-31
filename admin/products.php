@@ -352,7 +352,7 @@ $conn->close();
             align-items: center;
             justify-content: center;
 
-            font-size: 22px;
+            font-size:30px;
 
             color: white;
 
@@ -370,7 +370,7 @@ $conn->close();
 
             font-family: "Playfair Display", serif;
 
-            font-size: 18px;
+            font-size: 25px;
 
             font-weight: 700;
 
@@ -672,7 +672,7 @@ $conn->close();
 
             font-family: "Playfair Display", serif;
 
-            font-size: 23px;
+            font-size: 30px;
 
             color: var(--brown);
 
@@ -683,7 +683,7 @@ $conn->close();
 
             color: var(--brown-light);
 
-            font-size: 12px;
+            font-size: 14px;
 
             margin-top: 2px;
         }
@@ -714,7 +714,7 @@ $conn->close();
 
             color: var(--brown);
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -770,7 +770,7 @@ $conn->close();
 
             color: var(--brown);
 
-            font-size: 12px;
+            font-size: 15px;
         }
 
         .top-admin-text span {
@@ -779,7 +779,7 @@ $conn->close();
 
             color: var(--brown-light);
 
-            font-size: 10px;
+            font-size: 13px;
 
             margin-top: 2px;
         }
@@ -827,7 +827,7 @@ $conn->close();
 
         .page-heading p {
 
-            font-size: 13px;
+            font-size: 15px;
 
             color: var(--brown-light);
 
@@ -1004,7 +1004,7 @@ $conn->close();
 
         .stat-label {
 
-            font-size: 11px;
+            font-size: 15px;
 
             color: var(--brown-light);
 
@@ -1140,7 +1140,7 @@ $conn->close();
 
             color: white;
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1231,14 +1231,14 @@ $conn->close();
 
             font-family: "Playfair Display", serif;
 
-            font-size: 18px;
+            font-size: 22px;
 
             color: var(--brown);
         }
 
         .table-heading p {
 
-            font-size: 11px;
+            font-size: 12px;
 
             color: var(--brown-light);
 
@@ -1255,7 +1255,7 @@ $conn->close();
 
             color: var(--dark-pink);
 
-            font-size: 11px;
+            font-size: 13spx;
 
             font-weight: 700;
 
@@ -1284,7 +1284,7 @@ $conn->close();
 
             color: var(--brown-light);
 
-            font-size: 10px;
+            font-size: 12px;
 
             font-weight: 700;
 
@@ -1391,7 +1391,7 @@ $conn->close();
 
         .product-name {
 
-            font-size: 13px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1408,7 +1408,7 @@ $conn->close();
 
         .product-description {
 
-            font-size: 10px;
+            font-size: 13px;
 
             color: var(--brown-light);
 
@@ -1442,7 +1442,7 @@ $conn->close();
 
             color: var(--dark-pink);
 
-            font-size: 10px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1458,7 +1458,7 @@ $conn->close();
 
             font-weight: 700;
 
-            font-size: 13px;
+            font-size: 15px;
 
             color: var(--brown);
 
@@ -2051,6 +2051,20 @@ $conn->close();
                 </span>
 
             </a>
+			<a
+                    href="message.php"
+                    class="nav-link"
+                >
+
+                    <span class="nav-icon">
+                        💌
+                    </span>
+
+                    <span>
+                        Messages
+                    </span>
+
+                </a>
 
         </div>
 

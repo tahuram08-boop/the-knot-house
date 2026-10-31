@@ -685,7 +685,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             justify-content: center;
 
-            font-size: 22px;
+            font-size: 30px;
 
             flex-shrink: 0;
         }
@@ -697,7 +697,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "Playfair Display",
                 serif;
 
-            font-size: 18px;
+            font-size: 25px;
 
             line-height: 1.2;
         }
@@ -712,7 +712,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color:
                 var(--pink);
 
-            font-size: 9px;
+            font-size: 10px;
 
             font-weight: 700;
 
@@ -1025,7 +1025,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "Playfair Display",
                 serif;
 
-            font-size: 25px;
+            font-size: 30px;
 
             font-weight: 600;
 
@@ -1090,7 +1090,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color:
                 var(--brown);
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 600;
 
@@ -1146,7 +1146,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         .top-admin-name {
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 700;
         }
@@ -1157,7 +1157,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color:
                 var(--brown-light);
 
-            font-size: 10px;
+            font-size: 13px;
 
             margin-top: 1px;
         }
@@ -1331,7 +1331,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color:
                 var(--brown-light);
 
-            font-size: 12px;
+            font-size: 15px;
         }
 
 
@@ -1369,7 +1369,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color:
                 var(--brown);
 
-            font-size: 12px;
+            font-size: 14px;
 
             font-weight: 700;
         }
@@ -1454,7 +1454,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color:
                 #9a8989;
 
-            font-size: 10px;
+            font-size: 13px;
 
             line-height: 1.5;
         }
@@ -1781,7 +1781,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 serif;
 
             font-size:
-                18px;
+                20px;
         }
 
 
@@ -1855,7 +1855,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 3px;
 
             font-size:
-                12px;
+                15px;
         }
 
 
@@ -1868,7 +1868,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 var(--brown-light);
 
             font-size:
-                10px;
+                13px;
 
             line-height:
                 1.5;
@@ -1894,7 +1894,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 var(--dark-pink);
 
             font-size:
-                11px;
+                15px;
 
             line-height:
                 1.6;
@@ -2233,6 +2233,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </span>
 
             </a>
+			<a
+                    href="message.php"
+                    class="nav-link"
+                >
+
+                    <span class="nav-icon">
+                        💌
+                    </span>
+
+                    <span>
+                        Messages
+                    </span>
+
+                </a>
 
 
             <!-- MANAGEMENT -->
@@ -2265,7 +2279,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             >
 
                 <span class="nav-icon">
-                    🌐
+                   👁️
                 </span>
 
                 <span>
@@ -2404,7 +2418,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     class="view-store"
                 >
 
-                    🌐
+                                        👁️
+
 
                     <span>
                         View Store

@@ -1,56 +1,34 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#fffaf7">
+    <meta name="description" content="Contact The Knot House for handmade crochet products, custom orders, and enquiries.">
 
     <title>Contact Us | The Knot House</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
-
-        /* =========================================================
-           THE KNOT HOUSE - CONTACT PAGE
-           ========================================================= */
-
         :root {
             --pink: #a96771;
             --dark-pink: #8d555e;
             --light-pink: #f8e8e7;
             --pink-soft: #f3d8d9;
-
             --cream: #fffaf7;
             --cream-dark: #f6eee9;
-
             --brown: #513d3d;
             --brown-light: #806969;
-
             --white: #ffffff;
-
             --border: #ead9d6;
-
             --gold: #c69b62;
-
-            --shadow:
-                0 20px 50px rgba(81, 61, 61, 0.10);
-
-            --shadow-small:
-                0 10px 30px rgba(81, 61, 61, 0.08);
+            --shadow: 0 20px 50px rgba(81, 61, 61, .10);
+            --shadow-small: 0 10px 30px rgba(81, 61, 61, .08);
         }
-
-
-        /* =========================================================
-           RESET
-           ========================================================= */
 
         * {
             margin: 0;
@@ -58,1835 +36,1330 @@
             box-sizing: border-box;
         }
 
-
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: 100px;
         }
-
 
         body {
             font-family: "DM Sans", sans-serif;
             background: var(--cream);
             color: var(--brown);
+            font-size: 16px;
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
-
         a {
-            text-decoration: none;
             color: inherit;
+            text-decoration: none;
         }
 
-
-        button,
-        input,
-        textarea,
-        select {
-            font-family: inherit;
+        button, input, textarea, select {
+            font: inherit;
         }
 
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        /* =========================================================
-           PAGE LOADER
-           ========================================================= */
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible,
+        select:focus-visible {
+            outline: 3px solid rgba(169, 103, 113, .4);
+            outline-offset: 3px;
+        }
+
+        /* PAGE LOADER */
 
         .page-loader {
             position: fixed;
             inset: 0;
-
-            background: var(--cream);
-
             z-index: 9999;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
-            transition:
-                opacity .5s ease,
-                visibility .5s ease;
+            background: var(--cream);
+            transition: opacity .5s ease, visibility .5s ease;
         }
-
 
         .page-loader.hide {
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
         }
-
 
         .loader-content {
             text-align: center;
         }
 
-
         .loader-yarn {
             font-size: 48px;
-
-            animation:
-                yarnSpin 1.5s linear infinite;
+            animation: yarnSpin 1.5s linear infinite;
         }
-
 
         .loader-content p {
             margin-top: 12px;
-
             color: var(--pink);
-
-            font-size: 12px;
-
-            font-weight: 700;
-
+            font-size: 13px;
+            font-weight: 800;
             letter-spacing: 2px;
         }
 
-
         @keyframes yarnSpin {
-
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-
+            to { transform: rotate(360deg); }
         }
 
-
-        /* =========================================================
-           HEADER
-           ========================================================= */
+        /* HEADER */
 
         header {
             position: fixed;
-
             top: 0;
             left: 0;
-
-            width: 100%;
-
             z-index: 1000;
-
-            background:
-                rgba(255, 250, 247, 0.95);
-
+            width: 100%;
+            background: rgba(255, 250, 247, .94);
             backdrop-filter: blur(16px);
-
-            border-bottom:
-                1px solid rgba(234, 217, 214, 0.8);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(234, 217, 214, .8);
         }
-
 
         .navbar {
+            width: 100%;
             max-width: 1250px;
-
             min-height: 82px;
-
             margin: auto;
-
             padding: 12px 25px;
-
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
-            gap: 20px;
+            gap: 25px;
         }
-
-
-        /* =========================================================
-           LOGO
-           ========================================================= */
 
         .logo {
             display: flex;
-
             align-items: center;
-
             gap: 11px;
-
             flex-shrink: 0;
         }
-
 
         .logo img {
             width: 48px;
             height: 48px;
-
             object-fit: contain;
-
             border-radius: 50%;
         }
 
-
         .logo-text {
-            font-family:
-                "Playfair Display", serif;
-
-            color: var(--dark-pink);
-
+            font-family: "Playfair Display", serif;
             font-size: 22px;
-
             font-weight: 700;
-
+            line-height: normal;
+            color: var(--dark-pink);
             white-space: nowrap;
         }
 
-
-        /* =========================================================
-           NAVIGATION
-           ========================================================= */
-
-        .nav-links {
-            list-style: none;
-
+        header nav {
+            flex: 1;
             display: flex;
-
-            align-items: center;
-
-            gap: 5px;
+            justify-content: center;
+            min-width: 0;
         }
 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            list-style: none;
+            flex-wrap: nowrap;
+        }
 
         .nav-links a {
             position: relative;
-
             display: block;
-
-            padding: 10px 11px;
-
+            padding: 10px 8px;
             color: var(--brown-light);
-
             font-size: 14px;
-
-            font-weight: 600;
-
-            transition: .3s ease;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: color .3s ease;
         }
-
 
         .nav-links a::after {
             content: "";
-
             position: absolute;
-
             left: 11px;
             right: 11px;
-
             bottom: 3px;
-
             height: 2px;
-
             background: var(--pink);
-
             transform: scaleX(0);
-
-            transition: .3s ease;
+            transform-origin: center;
+            transition: transform .3s ease;
         }
-
 
         .nav-links a:hover,
         .nav-links a.active {
             color: var(--dark-pink);
         }
 
-
         .nav-links a:hover::after,
         .nav-links a.active::after {
             transform: scaleX(1);
         }
 
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
 
-        /* =========================================================
-           CART
-           ========================================================= */
-
-        .cart-btn {
-            position: relative;
-
-            width: 50px;
-            height: 44px;
-
-            border: none;
-
-            border-radius: 50px;
-
-            background: var(--light-pink);
-
-            color: var(--dark-pink);
-
-            font-size: 20px;
-
+        .cart-btn,
+        .profile-btn,
+        .menu-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
             cursor: pointer;
-
             transition: .3s ease;
         }
 
+        .cart-btn {
+            position: relative;
+            min-width: 50px;
+            height: 44px;
+            padding: 0 13px;
+            border: none;
+            border-radius: 50px;
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            font-size: 20px;
+        }
 
         .cart-btn:hover {
             background: var(--pink-soft);
-
             transform: translateY(-2px);
         }
 
-
         .cart-count {
             position: absolute;
-
             top: -4px;
-            right: -3px;
-
+            right: -4px;
             min-width: 20px;
             height: 20px;
-
+            padding: 0 5px;
             display: flex;
-
             align-items: center;
             justify-content: center;
-
-            padding: 0 5px;
-
-            border-radius: 50%;
-
+            border-radius: 50px;
             background: var(--dark-pink);
-
             color: white;
-
             font-size: 11px;
-
             font-weight: 700;
         }
 
+        .profile-btn {
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            background: var(--light-pink);
+            color: var(--dark-pink);
+        }
 
-        /* =========================================================
-           MOBILE MENU
-           ========================================================= */
+        .profile-btn svg {
+            width: 23px;
+            height: 23px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .profile-btn:hover {
+            background: var(--dark-pink);
+            color: white;
+            border-color: var(--dark-pink);
+            transform: translateY(-2px);
+        }
 
         .menu-btn {
             display: none;
-
             width: 43px;
             height: 43px;
-
             border: none;
-
             border-radius: 50%;
-
             background: var(--light-pink);
-
             color: var(--dark-pink);
-
             font-size: 21px;
-
-            cursor: pointer;
         }
 
+        .menu-btn:hover {
+            background: var(--pink-soft);
+        }
 
-        /* =========================================================
-           HERO
-           ========================================================= */
+        /* CONTACT HERO */
 
         .contact-hero {
             position: relative;
-
-            padding:
-                165px 25px 95px;
-
+            padding: 165px 25px 95px;
             text-align: center;
-
             overflow: hidden;
-
             background:
-
-                radial-gradient(
-                    circle at 10% 20%,
-                    rgba(243, 216, 217, .85),
-                    transparent 30%
-                ),
-
-                radial-gradient(
-                    circle at 90% 75%,
-                    rgba(248, 232, 231, .9),
-                    transparent 35%
-                ),
-
+                radial-gradient(circle at 10% 20%, rgba(243, 216, 217, .85), transparent 30%),
+                radial-gradient(circle at 90% 75%, rgba(248, 232, 231, .9), transparent 35%),
                 var(--cream);
         }
 
-
         .hero-decoration {
             position: absolute;
-
             color: var(--pink);
-
             opacity: .22;
-
             font-size: 35px;
-
-            animation:
-                floatDecoration 5s ease-in-out infinite;
+            animation: floatDecoration 5s ease-in-out infinite;
+            pointer-events: none;
         }
 
-
-        .decor-one {
-            left: 9%;
-            top: 30%;
-        }
-
-
-        .decor-two {
-            right: 10%;
-            top: 35%;
-
-            animation-delay: 1s;
-        }
-
-
-        .decor-three {
-            left: 18%;
-            bottom: 13%;
-
-            animation-delay: 2s;
-        }
-
-
-        .decor-four {
-            right: 18%;
-            bottom: 12%;
-
-            animation-delay: 1.5s;
-        }
-
+        .decor-one { left: 9%; top: 30%; }
+        .decor-two { right: 10%; top: 35%; animation-delay: 1s; }
+        .decor-three { left: 18%; bottom: 13%; animation-delay: 2s; }
+        .decor-four { right: 18%; bottom: 12%; animation-delay: 1.5s; }
 
         @keyframes floatDecoration {
-
-            0%,
-            100% {
-                transform:
-                    translateY(0)
-                    rotate(0);
-            }
-
-            50% {
-                transform:
-                    translateY(-12px)
-                    rotate(8deg);
-            }
-
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-12px) rotate(8deg); }
         }
-
 
         .hero-label {
             display: inline-flex;
-
             align-items: center;
-
             gap: 8px;
-
-            padding: 8px 16px;
-
-            background:
-                rgba(255, 255, 255, .75);
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 50px;
-
-            color: var(--pink);
-
-            font-size: 12px;
-
-            font-weight: 800;
-
-            letter-spacing: 1.5px;
-
+            padding: 9px 17px;
             margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, .75);
+            color: var(--pink);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
         }
-
 
         .contact-hero h1 {
-            font-family:
-                "Playfair Display", serif;
-
-            font-size:
-                clamp(42px, 7vw, 74px);
-
-            line-height: 1.05;
-
-            color: var(--dark-pink);
-
             margin-bottom: 20px;
+            color: var(--dark-pink);
+            font-family: "Playfair Display", serif;
+            font-size: clamp(44px, 7vw, 76px);
+            line-height: 1.1;
         }
-
 
         .contact-hero h1 span {
             color: var(--pink);
-
             font-style: italic;
         }
 
-
         .contact-hero p {
-            max-width: 650px;
-
+            max-width: 680px;
             margin: auto;
-
             color: var(--brown-light);
-
+            font-size: 17px;
             line-height: 1.8;
-
-            font-size: 16px;
         }
 
-
-        /* =========================================================
-           CONTACT SECTION
-           ========================================================= */
+        /* CONTACT SECTION */
 
         .contact-section {
             max-width: 1180px;
-
             margin: auto;
-
-            padding:
-                80px 25px 100px;
+            padding: 80px 25px 100px;
         }
-
 
         .section-title {
-            text-align: center;
-
             margin-bottom: 50px;
+            text-align: center;
         }
-
 
         .small-title {
-            color: var(--pink);
-
-            font-size: 12px;
-
-            font-weight: 800;
-
-            letter-spacing: 2px;
-
             margin-bottom: 10px;
+            color: var(--pink);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
         }
-
 
         .section-title h2 {
-            font-family:
-                "Playfair Display", serif;
-
+            margin-bottom: 14px;
             color: var(--dark-pink);
-
-            font-size:
-                clamp(32px, 5vw, 48px);
-
-            margin-bottom: 12px;
+            font-family: "Playfair Display", serif;
+            font-size: clamp(33px, 5vw, 49px);
+            line-height: 1.2;
         }
-
 
         .section-title p {
-            max-width: 600px;
-
+            max-width: 650px;
             margin: auto;
-
             color: var(--brown-light);
-
-            line-height: 1.7;
+            font-size: 16px;
+            line-height: 1.8;
         }
-
-
-        /* =========================================================
-           CONTACT GRID
-           ========================================================= */
 
         .contact-grid {
             display: grid;
-
-            grid-template-columns:
-                .85fr 1.35fr;
-
+            grid-template-columns: .85fr 1.35fr;
             gap: 30px;
-
             align-items: stretch;
         }
 
-
-        /* =========================================================
-           CONTACT INFORMATION
-           ========================================================= */
+        /* CONTACT INFORMATION */
 
         .contact-info {
             position: relative;
-
             padding: 38px;
-
-            border-radius: 28px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    var(--dark-pink),
-                    #a96771
-                );
-
-            color: white;
-
             overflow: hidden;
-
+            border-radius: 28px;
+            background: linear-gradient(145deg, var(--dark-pink), var(--pink));
+            color: white;
             box-shadow: var(--shadow);
         }
 
-
         .contact-info::before {
             content: "🧶";
-
             position: absolute;
-
             right: -20px;
             bottom: -25px;
-
             font-size: 150px;
-
             opacity: .10;
-
             transform: rotate(-15deg);
+            pointer-events: none;
         }
-
 
         .contact-info h3 {
             position: relative;
-
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 32px;
-
             margin-bottom: 12px;
+            font-family: "Playfair Display", serif;
+            font-size: 33px;
         }
-
 
         .contact-info > p {
             position: relative;
-
-            color:
-                rgba(255, 255, 255, .82);
-
-            line-height: 1.7;
-
-            font-size: 14px;
-
             margin-bottom: 25px;
+            color: rgba(255, 255, 255, .88);
+            font-size: 15px;
+            line-height: 1.8;
         }
-
 
         .info-item {
             position: relative;
-
             display: flex;
-
             align-items: flex-start;
-
             gap: 15px;
-
             padding: 16px 0;
-
-            border-bottom:
-                1px solid rgba(255, 255, 255, .16);
+            border-bottom: 1px solid rgba(255, 255, 255, .16);
         }
-
 
         .info-item:last-of-type {
             border-bottom: none;
         }
 
-
         .info-icon {
-            width: 43px;
-            height: 43px;
-
-            flex-shrink: 0;
-
+            width: 45px;
+            height: 45px;
             display: flex;
-
             align-items: center;
             justify-content: center;
-
-            background:
-                rgba(255, 255, 255, .13);
-
+            flex-shrink: 0;
             border-radius: 13px;
-
-            font-size: 19px;
+            background: rgba(255, 255, 255, .13);
+            font-size: 20px;
         }
-
 
         .info-text strong {
             display: block;
-
             margin-bottom: 4px;
-
-            font-size: 14px;
+            font-size: 15px;
         }
-
 
         .info-text span {
-            color:
-                rgba(255, 255, 255, .78);
-
-            font-size: 13px;
-
-            line-height: 1.6;
+            color: rgba(255, 255, 255, .84);
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
         }
 
-
-        /* =========================================================
-           INSTAGRAM CARD
-           ========================================================= */
+        /* INSTAGRAM CARD */
 
         .instagram-card {
             position: relative;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 14px;
-
-            margin-top: 18px;
-
-            padding: 16px;
-
-            border:
-                1px solid rgba(255, 255, 255, .18);
-
-            border-radius: 18px;
-
-            background:
-                rgba(255, 255, 255, .10);
-
-            transition: .35s ease;
-
             z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .10);
+            transition: .35s ease;
         }
-
 
         .instagram-card:hover {
-            background:
-                rgba(255, 255, 255, .17);
-
-            transform:
-                translateY(-3px);
+            background: rgba(255, 255, 255, .17);
+            transform: translateY(-3px);
         }
-
 
         .instagram-icon {
             width: 48px;
             height: 48px;
-
-            flex-shrink: 0;
-
             display: flex;
-
             align-items: center;
             justify-content: center;
-
+            flex-shrink: 0;
             border-radius: 15px;
-
             background: white;
-
             color: var(--dark-pink);
-
-            font-size: 25px;
+            font-size: 27px;
         }
-
 
         .instagram-text {
             flex: 1;
+            min-width: 0;
         }
-
 
         .instagram-text small {
             display: block;
-
-            color:
-                rgba(255, 255, 255, .70);
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            letter-spacing: 1px;
-
-            text-transform: uppercase;
-
             margin-bottom: 3px;
+            color: rgba(255, 255, 255, .78);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
         }
-
 
         .instagram-text strong {
             display: block;
-
+            margin-bottom: 3px;
             color: white;
-
             font-size: 14px;
-
-            margin-bottom: 2px;
+            overflow-wrap: anywhere;
         }
-
 
         .instagram-text span {
-            color:
-                rgba(255, 255, 255, .72);
-
-            font-size: 12px;
+            color: rgba(255, 255, 255, .82);
+            font-size: 13px;
         }
-
 
         .instagram-arrow {
-            font-size: 20px;
-
             color: white;
-
-            transition: .3s ease;
+            font-size: 22px;
+            transition: transform .3s ease;
         }
-
 
         .instagram-card:hover .instagram-arrow {
-            transform:
-                translateX(4px);
+            transform: translateX(4px);
         }
 
-
-        /* =========================================================
-           FORM CARD
-           ========================================================= */
+        /* CONTACT FORM */
 
         .contact-form-card {
-            background: white;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 28px;
-
             padding: 38px;
-
-            box-shadow:
-                var(--shadow-small);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: white;
+            box-shadow: var(--shadow-small);
         }
-
 
         .contact-form-card h3 {
-            font-family:
-                "Playfair Display", serif;
-
-            color: var(--dark-pink);
-
-            font-size: 30px;
-
             margin-bottom: 8px;
+            color: var(--dark-pink);
+            font-family: "Playfair Display", serif;
+            font-size: 32px;
+            line-height: 1.3;
         }
-
 
         .form-subtitle {
-            color: var(--brown-light);
-
-            font-size: 14px;
-
-            line-height: 1.7;
-
             margin-bottom: 25px;
+            color: var(--brown-light);
+            font-size: 15px;
+            line-height: 1.8;
         }
-
 
         .form-row {
             display: grid;
-
-            grid-template-columns:
-                1fr 1fr;
-
+            grid-template-columns: 1fr 1fr;
             gap: 17px;
         }
 
-
         .form-group {
-            margin-bottom: 18px;
+            min-width: 0;
+            margin-bottom: 19px;
         }
-
 
         .form-group label {
             display: block;
-
-            margin-bottom: 7px;
-
+            margin-bottom: 8px;
             color: var(--brown);
-
-            font-size: 13px;
-
+            font-size: 14px;
             font-weight: 700;
         }
-
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-
-            border:
-                1px solid var(--border);
-
-            background: var(--cream);
-
-            color: var(--brown);
-
-            outline: none;
-
+            padding: 14px 15px;
+            border: 1px solid var(--border);
             border-radius: 13px;
-
-            padding: 13px 15px;
-
-            font-size: 13px;
-
-            transition: .3s ease;
+            outline: none;
+            background: var(--cream);
+            color: var(--brown);
+            font-size: 15px;
+            transition: border-color .3s ease, background .3s ease, box-shadow .3s ease;
         }
-
 
         .form-group input,
         .form-group select {
-            height: 48px;
+            height: 51px;
         }
-
 
         .form-group textarea {
-            min-height: 130px;
-
+            min-height: 140px;
             resize: vertical;
         }
-
 
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             border-color: var(--pink);
-
             background: white;
-
-            box-shadow:
-                0 0 0 4px
-                rgba(169, 103, 113, .08);
+            box-shadow: 0 0 0 4px rgba(169, 103, 113, .08);
         }
-
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
             color: #ad9898;
         }
 
-
         .submit-btn {
             width: 100%;
-
-            height: 51px;
-
+            min-height: 53px;
             border: none;
-
             border-radius: 50px;
-
-            background:
-                var(--dark-pink);
-
+            background: var(--dark-pink);
             color: white;
-
-            font-size: 14px;
-
+            font-size: 15px;
             font-weight: 700;
-
             cursor: pointer;
-
             transition: .3s ease;
         }
 
-
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             background: var(--pink);
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 10px 25px
-                rgba(141, 85, 94, .20);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(141, 85, 94, .20);
         }
 
-
-        /* =========================================================
-           SUCCESS MESSAGE
-           ========================================================= */
+        .submit-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
 
         .success-message {
             display: none;
-
             margin-top: 17px;
-
-            padding: 13px 16px;
-
+            padding: 14px 16px;
+            border: 1px solid #cde9d4;
             border-radius: 12px;
-
             background: #edf8f0;
-
-            border:
-                1px solid #cde9d4;
-
             color: #427050;
-
-            font-size: 13px;
-
+            font-size: 14px;
             text-align: center;
         }
-
 
         .success-message.show {
             display: block;
-
-            animation:
-                successAppear .4s ease;
+            animation: successAppear .4s ease;
         }
-
 
         @keyframes successAppear {
-
-            from {
-                opacity: 0;
-
-                transform:
-                    translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-            }
-
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-
-        /* =========================================================
-           CUSTOMIZATION SECTION
-           ========================================================= */
+        /* CUSTOMISATION SECTION */
 
         .custom-section {
             max-width: 1180px;
-
-            margin:
-                0 auto 100px;
-
+            margin: 0 auto 100px;
             padding: 0 25px;
         }
-
 
         .custom-card {
             position: relative;
-
-            padding:
-                55px 45px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 30px;
-
-            overflow: hidden;
-
-            background:
-
-                radial-gradient(
-                    circle at 10% 20%,
-                    white,
-                    transparent 30%
-                ),
-
-                linear-gradient(
-                    135deg,
-                    var(--light-pink),
-                    var(--pink-soft)
-                );
-
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
             gap: 30px;
+            padding: 55px 45px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            background:
+                radial-gradient(circle at 10% 20%, white, transparent 30%),
+                linear-gradient(135deg, var(--light-pink), var(--pink-soft));
         }
-
 
         .custom-card::after {
             content: "🪡";
-
             position: absolute;
-
             right: 25px;
             bottom: -25px;
-
             font-size: 130px;
-
             opacity: .08;
-
-            transform:
-                rotate(-15deg);
+            transform: rotate(-15deg);
+            pointer-events: none;
         }
-
 
         .custom-text {
             position: relative;
-
             z-index: 2;
         }
 
-
         .custom-text h2 {
-            font-family:
-                "Playfair Display", serif;
-
-            color: var(--dark-pink);
-
-            font-size:
-                clamp(30px, 4vw, 44px);
-
             margin-bottom: 12px;
+            color: var(--dark-pink);
+            font-family: "Playfair Display", serif;
+            font-size: clamp(31px, 4vw, 45px);
+            line-height: 1.2;
         }
-
 
         .custom-text p {
             max-width: 650px;
-
             color: var(--brown-light);
-
-            line-height: 1.7;
-
-            font-size: 14px;
+            font-size: 15px;
+            line-height: 1.8;
         }
-
 
         .custom-btn {
             position: relative;
-
             z-index: 3;
-
             flex-shrink: 0;
-
-            padding:
-                14px 24px;
-
+            padding: 15px 24px;
             border-radius: 50px;
-
-            background:
-                var(--dark-pink);
-
+            background: var(--dark-pink);
             color: white;
-
-            font-size: 13px;
-
+            font-size: 14px;
             font-weight: 700;
-
+            text-align: center;
             transition: .3s ease;
         }
 
-
         .custom-btn:hover {
-            background:
-                var(--pink);
-
-            transform:
-                translateY(-3px);
+            background: var(--pink);
+            transform: translateY(-3px);
         }
 
-
-        /* =========================================================
-           QUICK HELP
-           ========================================================= */
+        /* QUICK HELP */
 
         .quick-help {
             max-width: 900px;
-
-            margin:
-                0 auto 100px;
-
+            margin: 0 auto 100px;
             padding: 0 25px;
-
             text-align: center;
         }
 
-
         .quick-help h2 {
-            font-family:
-                "Playfair Display", serif;
-
-            color: var(--dark-pink);
-
-            font-size: 35px;
-
             margin-bottom: 12px;
+            color: var(--dark-pink);
+            font-family: "Playfair Display", serif;
+            font-size: clamp(30px, 4vw, 38px);
+            line-height: 1.3;
         }
-
 
         .quick-help p {
-            color: var(--brown-light);
-
-            font-size: 14px;
-
             margin-bottom: 25px;
+            color: var(--brown-light);
+            font-size: 15px;
+            line-height: 1.8;
         }
-
 
         .help-buttons {
             display: flex;
-
-            justify-content: center;
-
             flex-wrap: wrap;
-
+            justify-content: center;
             gap: 12px;
         }
 
-
         .help-btn {
-            padding:
-                12px 20px;
-
-            border:
-                1px solid var(--border);
-
+            padding: 13px 21px;
+            border: 1px solid var(--border);
             border-radius: 50px;
-
             background: white;
-
             color: var(--dark-pink);
-
-            font-size: 13px;
-
+            font-size: 14px;
             font-weight: 700;
-
             transition: .3s ease;
         }
 
-
         .help-btn:hover {
-            background:
-                var(--light-pink);
-
-            border-color:
-                var(--pink);
-
-            transform:
-                translateY(-2px);
+            border-color: var(--pink);
+            background: var(--light-pink);
+            transform: translateY(-2px);
         }
 
-
-        /* =========================================================
-           FOOTER
-           ========================================================= */
+        /* FOOTER */
 
         footer {
+            padding: 60px 0 25px;
             background: #4b3838;
-
-            color: white;
-
-            padding:
-                70px 25px 25px;
+            color: var(--white);
         }
 
-
         .footer-container {
-            max-width: 1180px;
-
+            width: 92%;
+            max-width: 1200px;
             margin: auto;
-
+            padding-bottom: 45px;
             display: grid;
-
-            grid-template-columns:
-                1.5fr 1fr 1fr 1fr;
-
+            grid-template-columns: 1.4fr 1fr 1fr 1fr;
             gap: 45px;
         }
 
+        .footer-brand,
+        .footer-column {
+            min-width: 0;
+        }
 
         .footer-logo {
-            font-family:
-                "Playfair Display", serif;
-
-            font-size: 28px;
-
-            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            color: white;
+            font-family: "Playfair Display", serif;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.4;
         }
 
+        .footer-logo img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .08);
+        }
 
-        .footer-about p {
-            max-width: 340px;
-
-            color: #dbcaca;
-
-            line-height: 1.8;
-
+        .footer-brand > p {
+            max-width: 330px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, .78);
             font-size: 14px;
+            line-height: 1.9;
         }
-
 
         .footer-column h3 {
-            font-size: 14px;
-
-            letter-spacing: 1px;
-
-            margin-bottom: 18px;
+            margin-bottom: 19px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
         }
-
 
         .footer-column a {
             display: block;
-
-            color: #dbcaca;
-
-            font-size: 13px;
-
-            margin-bottom: 11px;
-
-            transition: .3s ease;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, .76);
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+            transition: color .3s ease, transform .3s ease;
         }
-
 
         .footer-column a:hover {
             color: white;
-
-            transform:
-                translateX(4px);
+            transform: translateX(3px);
         }
 
+        .footer-contact-text {
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, .76);
+            font-size: 14px;
+            line-height: 1.7;
+        }
 
         .footer-bottom {
-            max-width: 1180px;
-
-            margin:
-                50px auto 0;
-
-            padding-top: 20px;
-
-            border-top:
-                1px solid
-                rgba(255, 255, 255, .15);
-
-            text-align: center;
-
-            color: #cdbbbb;
-
-            font-size: 12px;
+            width: 92%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, .16);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
+        .footer-bottom p {
+            color: rgba(255, 255, 255, .70);
+            font-size: 13px;
+            line-height: 1.7;
+        }
 
-        /* =========================================================
-           TOAST
-           ========================================================= */
+        .footer-socials {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-socials a {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .10);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            transition: background .3s ease, transform .3s ease;
+        }
+
+        .footer-socials a:hover {
+            background: var(--pink);
+            transform: translateY(-3px);
+        }
+
+        /* TOAST */
 
         .toast {
             position: fixed;
-
             right: 25px;
             bottom: 25px;
-
             z-index: 7000;
-
-            padding:
-                13px 20px;
-
+            max-width: calc(100% - 36px);
+            padding: 14px 21px;
             border-radius: 50px;
-
-            background:
-                var(--dark-pink);
-
+            background: var(--dark-pink);
             color: white;
-
-            font-size: 13px;
-
-            box-shadow:
-                var(--shadow);
-
+            font-size: 14px;
+            box-shadow: var(--shadow);
             opacity: 0;
-
-            transform:
-                translateY(70px);
-
+            transform: translateY(70px);
+            pointer-events: none;
             transition: .35s ease;
         }
 
-
         .toast.show {
             opacity: 1;
-
-            transform:
-                translateY(0);
+            transform: translateY(0);
         }
 
-
-        /* =========================================================
-           BACK TO TOP
-           ========================================================= */
+        /* BACK TO TOP */
 
         .back-top {
             position: fixed;
-
             right: 22px;
             bottom: 85px;
-
-            width: 45px;
-            height: 45px;
-
-            border: none;
-
-            border-radius: 50%;
-
-            background:
-                var(--pink);
-
-            color: white;
-
-            font-size: 18px;
-
-            cursor: pointer;
-
             z-index: 900;
-
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 50%;
+            background: var(--pink);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
             opacity: 0;
-
             visibility: hidden;
-
-            transform:
-                translateY(10px);
-
+            transform: translateY(10px);
             transition: .3s ease;
         }
 
-
         .back-top.show {
             opacity: 1;
-
             visibility: visible;
-
-            transform:
-                translateY(0);
+            transform: translateY(0);
         }
 
+        /* RESPONSIVE */
 
-        /* =========================================================
-           RESPONSIVE
-           ========================================================= */
+        @media (max-width: 1250px) {
+            .navbar {
+                gap: 12px;
+                padding-left: 18px;
+                padding-right: 18px;
+            }
 
-        @media (max-width: 1050px) {
+            .logo-text { font-size: 20px; }
 
             .nav-links a {
-                padding:
-                    10px 7px;
+                padding-left: 6px;
+                padding-right: 6px;
+                font-size: 13px;
             }
-
         }
 
+        @media (max-width: 1100px) {
+            .nav-links { gap: 0; }
 
-        @media (max-width: 900px) {
-
-            .menu-btn {
-                display: block;
+            .nav-links a {
+                padding-left: 6px;
+                padding-right: 6px;
+                font-size: 12px;
             }
 
+            .navbar { gap: 10px; }
+
+            .nav-actions { gap: 7px; }
+
+            .footer-container { gap: 30px; }
+        }
+
+        @media (max-width: 900px) {
+            .navbar { min-height: 76px; }
+
+            header nav { flex: none; }
+
+            .menu-btn {
+                display: inline-flex;
+            }
+
+            .nav-actions {
+                margin-left: auto;
+                gap: 7px;
+            }
+
+            .profile-btn,
+            .cart-btn {
+                width: 42px;
+                min-width: 42px;
+                height: 42px;
+                padding: 0;
+            }
 
             .nav-links {
                 position: absolute;
-
-                top: 82px;
-
-                left: 20px;
-                right: 20px;
-
+                top: 76px;
+                left: 18px;
+                right: 18px;
                 display: none;
-
                 flex-direction: column;
-
                 align-items: stretch;
-
-                padding: 15px;
-
-                background:
-                    rgba(255, 250, 247, .98);
-
-                border:
-                    1px solid var(--border);
-
+                padding: 14px;
+                border: 1px solid var(--border);
                 border-radius: 20px;
-
-                box-shadow:
-                    var(--shadow);
+                background: rgba(255, 250, 247, .99);
+                box-shadow: var(--shadow);
+                max-height: calc(100vh - 100px);
+                overflow-y: auto;
             }
 
-
-            .nav-links.show {
-                display: flex;
-            }
-
+            .nav-links.show { display: flex; }
 
             .nav-links a {
-                padding:
-                    13px 15px;
-
+                padding: 12px 15px;
                 border-radius: 10px;
+                font-size: 15px;
             }
 
+            .nav-links a::after { display: none; }
 
-            .nav-links a:hover {
-                background:
-                    var(--light-pink);
-            }
+            .nav-links a:hover { background: var(--light-pink); }
 
+            .contact-grid { grid-template-columns: 1fr; }
 
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-
-
-            .footer-container {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
+            .footer-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
 
-
         @media (max-width: 650px) {
-
             .navbar {
-                padding:
-                    10px 16px;
+                padding: 10px 16px;
+                gap: 8px;
             }
 
+            .logo { gap: 7px; }
 
             .logo img {
                 width: 42px;
                 height: 42px;
             }
 
+            .logo-text { font-size: 19px; }
 
-            .logo-text {
-                font-size: 19px;
+            .nav-actions { gap: 7px; }
+
+            .profile-btn,
+            .cart-btn,
+            .menu-btn {
+                width: 40px;
+                min-width: 40px;
+                height: 40px;
             }
 
+            .cart-btn { font-size: 19px; }
 
-            .contact-hero {
-                padding:
-                    140px 20px 75px;
+            .profile-btn svg {
+                width: 21px;
+                height: 21px;
             }
 
+            .menu-btn { font-size: 21px; }
 
-            .contact-section {
-                padding:
-                    55px 18px 75px;
+            .contact-hero { padding: 135px 20px 70px; }
+
+            .contact-hero h1 { font-size: clamp(39px, 10vw, 55px); }
+
+            .contact-hero p { font-size: 16px; }
+
+            .hero-label {
+                font-size: 11px;
+                letter-spacing: 1px;
             }
 
+            .contact-section { padding: 55px 18px 75px; }
+
+            .section-title { margin-bottom: 35px; }
+
+            .section-title h2 { font-size: 34px; }
+
+            .section-title p { font-size: 15px; }
 
             .contact-info,
             .contact-form-card {
-                padding:
-                    28px 22px;
+                padding: 28px 22px;
+                border-radius: 23px;
             }
 
+            .contact-info h3 { font-size: 30px; }
+
+            .contact-form-card h3 { font-size: 29px; }
 
             .form-row {
                 grid-template-columns: 1fr;
-
                 gap: 0;
             }
 
-
             .custom-section {
                 padding: 0 18px;
-
                 margin-bottom: 75px;
             }
 
-
             .custom-card {
-                padding:
-                    40px 25px;
-
-                flex-direction: column;
-
                 align-items: flex-start;
+                flex-direction: column;
+                padding: 38px 24px;
+                border-radius: 24px;
             }
 
+            .custom-text h2 { font-size: 33px; }
+
+            .custom-btn {
+                width: 100%;
+                text-align: center;
+            }
 
             .quick-help {
                 padding: 0 18px;
-
                 margin-bottom: 75px;
             }
 
+            .quick-help h2 { font-size: 31px; }
 
             .footer-container {
                 grid-template-columns: 1fr;
-
                 gap: 30px;
+                padding-bottom: 35px;
             }
 
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .toast {
+                right: 18px;
+                bottom: 18px;
+                left: 18px;
+                max-width: none;
+                border-radius: 15px;
+                text-align: center;
+            }
+
+            .back-top {
+                right: 18px;
+                bottom: 80px;
+            }
         }
 
+        @media (max-width: 400px) {
+            .navbar {
+                padding-left: 10px;
+                padding-right: 10px;
+                gap: 5px;
+            }
+
+            .logo { gap: 5px; }
+
+            .logo img {
+                width: 34px;
+                height: 34px;
+            }
+
+            .logo-text { font-size: 17px; }
+
+            .nav-actions { gap: 5px; }
+
+            .profile-btn,
+            .cart-btn,
+            .menu-btn {
+                width: 36px;
+                min-width: 36px;
+                height: 36px;
+            }
+
+            .cart-btn { font-size: 17px; }
+
+            .profile-btn svg {
+                width: 19px;
+                height: 19px;
+            }
+
+            .menu-btn { font-size: 19px; }
+
+            .cart-count {
+                min-width: 17px;
+                height: 17px;
+                top: -3px;
+                right: -3px;
+                font-size: 10px;
+            }
+
+            .contact-hero h1 { font-size: 39px; }
+
+            .hero-label { font-size: 10px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
     </style>
-
 </head>
-
 
 <body>
 
-
-    <!-- =========================================================
-         PAGE LOADER
-         ========================================================= -->
-
-    <div
-        class="page-loader"
-        id="pageLoader"
-    >
-
+    <!-- PAGE LOADER -->
+    <div class="page-loader" id="pageLoader">
         <div class="loader-content">
-
-            <div class="loader-yarn">
-                🧶
-            </div>
-
-            <p>
-                THE KNOT HOUSE
-            </p>
-
+            <div class="loader-yarn" aria-hidden="true">🧶</div>
+            <p>THE KNOT HOUSE</p>
         </div>
-
     </div>
 
-
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
-
+    <!-- HEADER -->
     <header>
-
         <div class="navbar">
 
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="logo"
-            >
-
-                <img
-                    src="./logo.png"
-                    alt="The Knot House Logo"
-                >
-
-                <span class="logo-text">
-                    The Knot House
-                </span>
-
+            <a href="index.html" class="logo" aria-label="The Knot House Home">
+                <img src="logo.png" alt="The Knot House Logo">
+                <span class="logo-text">The Knot House</span>
             </a>
 
-
-            <!-- NAVIGATION -->
-
-            <nav>
-
-                <ul
-                    class="nav-links"
-                    id="navLinks"
-                >
-
-                    <li>
-                        <a href="index.html">
-                            Home
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="about.html">
-                            About Us
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="product.html">
-                            Products
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="gallery.html">
-                            Gallery
-                        </a>
-                    </li>
-
-                    <li>
-                        <a
-                            href="contact.html"
-                            class="active"
-                        >
-                            Contact Us
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="feedback.html">
-                            Feedback
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="faq.html">
-                            FAQ
-                        </a>
-                    </li>
-
+            <nav aria-label="Main navigation">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="product.html">Products</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="contact.html" class="active" aria-current="page">Contact Us</a></li>
+                    <li><a href="feedback.html">Feedback</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="track-order.html">Track Order</a></li>
+                    <li><a href="my-messages.php">My Messages</a></li>
                 </ul>
-
             </nav>
 
+            <div class="nav-actions">
 
-            <!-- RIGHT SIDE -->
+                <a href="my-account.php"
+                   class="profile-btn"
+                   aria-label="My Account"
+                   title="My Account">
+                    👤
+                </a>
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:8px;
-                "
-            >
-
-                <button
-                    class="cart-btn"
-                    onclick="openCart()"
-                    aria-label="Open Cart"
-                >
-
+                <button class="cart-btn"
+                        onclick="openCart()"
+                        aria-label="Open shopping cart"
+                        title="Shopping Cart"
+                        type="button">
                     🛒
-
-                    <span
-                        class="cart-count"
-                        id="cartCount"
-                    >
-                        0
-                    </span>
-
+                    <span class="cart-count" id="cartCount">0</span>
                 </button>
 
-
-                <button
-                    class="menu-btn"
-                    id="menuBtn"
-                    aria-label="Open Menu"
-                >
-                    ☰
-                </button>
+                <button class="menu-btn"
+                        id="menuBtn"
+                        aria-label="Open Menu"
+                        aria-controls="navLinks"
+                        aria-expanded="false"
+                        title="Menu"
+                        type="button">☰</button>
 
             </div>
-
         </div>
-
     </header>
 
-
-    <!-- =========================================================
-         HERO
-         ========================================================= -->
-
+    <!-- HERO -->
     <section class="contact-hero">
+        <span class="hero-decoration decor-one" aria-hidden="true">✦</span>
+        <span class="hero-decoration decor-two" aria-hidden="true">♡</span>
+        <span class="hero-decoration decor-three" aria-hidden="true">✿</span>
+        <span class="hero-decoration decor-four" aria-hidden="true">•</span>
 
+        <div class="hero-label">🧶 WE'D LOVE TO HEAR FROM YOU</div>
 
-        <span class="hero-decoration decor-one">
-            ✦
-        </span>
-
-        <span class="hero-decoration decor-two">
-            ♡
-        </span>
-
-        <span class="hero-decoration decor-three">
-            ✿
-        </span>
-
-        <span class="hero-decoration decor-four">
-            •
-        </span>
-
-
-        <div class="hero-label">
-            🧶 WE'D LOVE TO HEAR FROM YOU
-        </div>
-
-
-        <h1>
-            Let's Talk <span>Stitches</span>
-        </h1>
-
+        <h1>Let's Talk <span>Stitches</span></h1>
 
         <p>
             Have a question, a custom crochet idea,
             or simply want to say hello?
             We'd love to hear from you.
         </p>
-
     </section>
 
-
-    <!-- =========================================================
-         CONTACT SECTION
-         ========================================================= -->
-
+    <!-- CONTACT SECTION -->
     <main class="contact-section">
 
-
         <div class="section-title">
+            <div class="small-title">✦ GET IN TOUCH ✦</div>
 
-            <div class="small-title">
-                ✦ GET IN TOUCH ✦
-            </div>
-
-            <h2>
-                We'd Love To Hear From You
-            </h2>
+            <h2>We'd Love To Hear From You</h2>
 
             <p>
                 Whether you have a question about our products,
                 want to place a custom order, or simply want
                 to share some love, send us a message.
             </p>
-
         </div>
-
 
         <div class="contact-grid">
 
-
-            <!-- =================================================
-                 CONTACT INFORMATION
-                 ================================================= -->
-
+            <!-- CONTACT INFORMATION -->
             <div class="contact-info">
 
-
-                <h3>
-                    Say Hello! 💗
-                </h3>
-
+                <h3>Say Hello! 💗</h3>
 
                 <p>
                     Every message matters to us.
@@ -1894,853 +1367,536 @@
                     beautiful together.
                 </p>
 
-
-                <!-- EMAIL -->
-
                 <div class="info-item">
-
-                    <div class="info-icon">
-                        📧
-                    </div>
-
+                    <div class="info-icon" aria-hidden="true">📧</div>
                     <div class="info-text">
-
-                        <strong>
-                            Email Us
-                        </strong>
-
-                        <span>
-                            theknothouse@gmail.com
-                        </span>
-
+                        <strong>Email Us</strong>
+                        <span>theknothouse@gmail.com</span>
                     </div>
-
                 </div>
 
-
-                <!-- PHONE -->
-
                 <div class="info-item">
-
-                    <div class="info-icon">
-                        📱
-                    </div>
-
+                    <div class="info-icon" aria-hidden="true">📱</div>
                     <div class="info-text">
-
-                        <strong>
-                            Call / WhatsApp
-                        </strong>
-
-                        <span>
-                            +91 XXXXX XXXXX
-                        </span>
-
+                        <strong>Call / WhatsApp</strong>
+                        <span>+91 XXXXX XXXXX</span>
                     </div>
-
                 </div>
 
-
-                <!-- LOCATION -->
-
                 <div class="info-item">
-
-                    <div class="info-icon">
-                        📍
-                    </div>
-
+                    <div class="info-icon" aria-hidden="true">📍</div>
                     <div class="info-text">
-
-                        <strong>
-                            Location
-                        </strong>
-
-                        <span>
-                            Ahmedabad, Gujarat, India
-                        </span>
-
+                        <strong>Location</strong>
+                        <span>Ahmedabad, Gujarat, India</span>
                     </div>
-
                 </div>
 
-
-                <!-- RESPONSE TIME -->
-
                 <div class="info-item">
-
-                    <div class="info-icon">
-                        ⏰
-                    </div>
-
+                    <div class="info-icon" aria-hidden="true">⏰</div>
                     <div class="info-text">
-
-                        <strong>
-                            Response Time
-                        </strong>
-
-                        <span>
-                            Usually within 24–48 hours
-                        </span>
-
+                        <strong>Response Time</strong>
+                        <span>Usually within 24–48 hours</span>
                     </div>
-
                 </div>
 
+                <a href="https://www.instagram.com/crochet__creations_by_amrin/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="instagram-card"
+                   aria-label="Visit our Instagram page">
 
-                <!-- =================================================
-                     INSTAGRAM
-                     ================================================= -->
-
-                <a
-                    href="https://www.instagram.com/crochet_creation_by_amrin/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="instagram-card"
-                >
-
-                    <div class="instagram-icon">
-                        ◎
-                    </div>
-
+                    <div class="instagram-icon" aria-hidden="true">◎</div>
 
                     <div class="instagram-text">
-
-                        <small>
-                            Follow Us On Instagram
-                        </small>
-
-                        <strong>
-                            @crochet_creation_by_amrin
-                        </strong>
-
-                        <span>
-                            See more handmade crochet creations
-                        </span>
-
+                        <small>Follow Us On Instagram</small>
+                        <strong>@crochet__creations_by_amrin</strong>
+                        <span>See more handmade crochet creations</span>
                     </div>
 
-
-                    <div class="instagram-arrow">
-                        →
-                    </div>
-
+                    <div class="instagram-arrow" aria-hidden="true">→</div>
                 </a>
-
 
             </div>
 
-
-            <!-- =================================================
-                 CONTACT FORM
-                 ================================================= -->
-
+            <!-- CONTACT FORM -->
             <div class="contact-form-card">
 
-
-                <h3>
-                    Send Us A Message
-                </h3>
-
+                <h3>Send Us A Message</h3>
 
                 <p class="form-subtitle">
                     Fill in the details below and we'll
                     get back to you with lots of handmade love. 🧶
                 </p>
 
-
-                <form id="contactForm">
-
-
-                    <!-- NAME + EMAIL -->
+                <form id="contactForm" method="POST" action="contact.php">
 
                     <div class="form-row">
-
-
                         <div class="form-group">
-
-                            <label for="name">
-                                Your Name *
-                            </label>
-
-                            <input
-                                type="text"
-                                id="name"
-                                placeholder="Enter your name"
-                                required
-                            >
-
+                            <label for="name">Your Name *</label>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   placeholder="Enter your name"
+                                   autocomplete="name"
+                                   maxlength="100"
+                                   required>
                         </div>
 
-
                         <div class="form-group">
-
-                            <label for="email">
-                                Email Address *
-                            </label>
-
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="Enter your email"
-                                required
-                            >
-
+                            <label for="email">Email Address *</label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   placeholder="Enter your email"
+                                   autocomplete="email"
+                                   maxlength="150"
+                                   required>
                         </div>
-
-
                     </div>
 
-
-                    <!-- PHONE + SUBJECT -->
-
                     <div class="form-row">
-
-
                         <div class="form-group">
-
-                            <label for="phone">
-                                Phone Number
-                            </label>
-
-                            <input
-                                type="tel"
-                                id="phone"
-                                placeholder="Enter your phone number"
-                            >
-
+                            <label for="phone">Phone Number</label>
+                            <input type="tel"
+                                   id="phone"
+                                   name="phone"
+                                   placeholder="Enter your phone number"
+                                   autocomplete="tel"
+                                   maxlength="20">
                         </div>
 
-
                         <div class="form-group">
-
-                            <label for="subject">
-                                Subject *
-                            </label>
-
-                            <select
-                                id="subject"
-                                required
-                            >
-
-                                <option value="">
-                                    Select a subject
-                                </option>
-
-                                <option value="Product Inquiry">
-                                    Product Inquiry
-                                </option>
-
-                                <option value="Customisation">
-                                    Customisation
-                                </option>
-
-                                <option value="Order Help">
-                                    Order Help
-                                </option>
-
-                                <option value="Collaboration">
-                                    Collaboration
-                                </option>
-
-                                <option value="General Question">
-                                    General Question
-                                </option>
-
+                            <label for="subject">Subject *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="Product Inquiry">Product Inquiry</option>
+                                <option value="Customisation">Customisation</option>
+                                <option value="Order Help">Order Help</option>
+                                <option value="Collaboration">Collaboration</option>
+                                <option value="General Question">General Question</option>
                             </select>
-
                         </div>
-
-
                     </div>
-
-
-                    <!-- MESSAGE -->
 
                     <div class="form-group">
-
-                        <label for="message">
-                            Your Message *
-                        </label>
-
-                        <textarea
-                            id="message"
-                            placeholder="Tell us what's on your mind..."
-                            required
-                        ></textarea>
-
+                        <label for="message">Your Message *</label>
+                        <textarea id="message"
+                                  name="message"
+                                  placeholder="Tell us what's on your mind..."
+                                  maxlength="3000"
+                                  required></textarea>
                     </div>
 
-
-                    <!-- SUBMIT -->
-
-                    <button
-                        type="submit"
-                        class="submit-btn"
-                    >
-
+                    <button type="submit" class="submit-btn">
                         📨 Send Message
-
                     </button>
 
-
-                    <!-- SUCCESS -->
-
-                    <div
-                        class="success-message"
-                        id="successMessage"
-                    >
-
-                        ✓ Thank you!
-                        Your message has been received.
+                    <div class="success-message"
+                         id="successMessage"
+                         role="status"
+                         aria-live="polite">
+                        ✓ Thank you! Your message has been received.
                         We'll get back to you soon. 🧶💗
-
                     </div>
 
-
                 </form>
-
             </div>
 
-
         </div>
-
     </main>
 
-
-    <!-- =========================================================
-         CUSTOMISATION SECTION
-         ========================================================= -->
-
+    <!-- CUSTOMISATION SECTION -->
     <section class="custom-section">
-
         <div class="custom-card">
 
-
             <div class="custom-text">
+                <div class="small-title">🪡 YOUR IDEA, OUR CRAFT</div>
 
-                <div class="small-title">
-                    🪡 YOUR IDEA, OUR CRAFT
-                </div>
-
-
-                <h2>
-                    Customisation Is Available
-                </h2>
-
+                <h2>Customisation Is Available</h2>
 
                 <p>
                     Have a special color, size, design or
-                    crochet idea in mind?
-                    Tell us what you are imagining and
-                    we'll work together to create something
-                    uniquely yours.
+                    crochet idea in mind? Tell us what you
+                    are imagining and we'll work together
+                    to create something uniquely yours.
                 </p>
-
             </div>
 
-
-            <a
-                href="#contactForm"
-                class="custom-btn"
-            >
+            <a href="#contactForm" class="custom-btn">
                 Start Your Custom Order →
             </a>
 
-
         </div>
-
     </section>
 
-
-    <!-- =========================================================
-         QUICK HELP
-         ========================================================= -->
-
+    <!-- QUICK HELP -->
     <section class="quick-help">
 
+        <div class="small-title">✦ NEED QUICK HELP? ✦</div>
 
-        <div class="small-title">
-            ✦ NEED QUICK HELP? ✦
-        </div>
-
-
-        <h2>
-            We May Already Have Your Answer
-        </h2>
-
+        <h2>We May Already Have Your Answer</h2>
 
         <p>
-            Check our frequently asked questions
-            for quick answers about orders,
-            customisation and products.
+            Check our frequently asked questions for quick answers
+            about orders, customisation and products.
         </p>
 
-
         <div class="help-buttons">
-
-            <a
-                href="faq.html"
-                class="help-btn"
-            >
-                ❓ Visit FAQ
-            </a>
-
-
-            <a
-                href="products.html"
-                class="help-btn"
-            >
-                🧶 Explore Products
-            </a>
-
-
-            <a
-                href="gallery.html"
-                class="help-btn"
-            >
-                🌸 View Gallery
-            </a>
-
-
-            <!-- INSTAGRAM BUTTON -->
-
-            <a
-                href="https://www.instagram.com/crochet_creation_by_amrin/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="help-btn"
-            >
-                ◎ Instagram
-            </a>
-
+            <a href="faq.html" class="help-btn">❓ Visit FAQ</a>
+            <a href="product.html" class="help-btn">🧶 Explore Products</a>
+            <a href="gallery.html" class="help-btn">🌸 View Gallery</a>
+            <a href="https://www.instagram.com/crochet__creations_by_amrin/"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="help-btn">◎ Instagram</a>
         </div>
-
 
     </section>
 
-
-    <!-- =========================================================
-         FOOTER
-         ========================================================= -->
-
+    <!-- FOOTER -->
     <footer>
-
-
         <div class="footer-container">
 
-
-            <div class="footer-about">
-
-                <div class="footer-logo">
-                    The Knot House 🧶
-                </div>
-
+            <!-- BRAND -->
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">
+                    <img src="logo.png"
+                         alt="The Knot House Logo"
+                         loading="lazy">
+                    <span>The Knot House</span>
+                </a>
 
                 <p>
-                    Handmade crochet pieces created
-                    with patience, creativity and lots
-                    of love. Every stitch is made to
-                    bring a little more warmth and
-                    happiness into your everyday life.
+                    A little place for handmade happiness, where every
+                    loop, stitch and creation is made with love.
                 </p>
-
             </div>
 
-
-            <!-- EXPLORE -->
-
+            <!-- QUICK LINKS -->
             <div class="footer-column">
-
-                <h3>
-                    EXPLORE
-                </h3>
-
-
-                <a href="index.html">
-                    Home
-                </a>
-
-
-                <a href="about.html">
-                    About Us
-                </a>
-
-
-                <a href="products.html">
-                    Products
-                </a>
-
-
-                <a href="gallery.html">
-                    Gallery
-                </a>
-
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="product.html">Products</a>
+                <a href="gallery.html">Gallery</a>
             </div>
-
-
-            <!-- CATEGORIES -->
-
-            <div class="footer-column">
-
-                <h3>
-                    CATEGORIES
-                </h3>
-
-
-                <a href="products.html?category=bags">
-                    Crochet Bags
-                </a>
-
-
-                <a href="products.html?category=flowers">
-                    Crochet Flowers
-                </a>
-
-
-                <a href="products.html?category=toys">
-                    Soft Toys
-                </a>
-
-
-                <a href="products.html?category=accessories">
-                    Accessories
-                </a>
-
-            </div>
-
 
             <!-- HELP -->
-
             <div class="footer-column">
-
-                <h3>
-                    HELP
-                </h3>
-
-
-                <a href="contact.html">
-                    Contact Us
-                </a>
-
-
-                <a href="feedback.html">
-                    Feedback
-                </a>
-
-
-                <a href="faq.html">
-                    FAQ
-                </a>
-
-
-                <a href="#contactForm">
-                    Custom Orders
-                </a>
-
-
-                <a href="https://www.instagram.com/crochet_creation_by_amrin/"
-                                  target="_blank"
-                              rel="noopener noreferrer">
-                              📷 @crochet_creation_by_amrin
-                            </a>
-
+                <h3>Help</h3>
+                <a href="contact.html">Contact Us</a>
+                <a href="feedback.html">Feedback</a>
+                <a href="faq.html">FAQ</a>
+                <a href="cart.html">My Cart</a>
             </div>
 
+            <!-- CONTACT -->
+            <div class="footer-column">
+                <h3>Contact</h3>
+
+                <a href="mailto:theknothouse@gmail.com">
+                    theknothouse@gmail.com
+                </a>
+
+                <a href="https://www.instagram.com/crochet__creations_by_amrin/"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    📷 crochet__creations_by_amrin
+                </a>
+
+                <p class="footer-contact-text">
+                    Ahmedabad, Gujarat, India
+                </p>
+            </div>
 
         </div>
 
-
+        <!-- COPYRIGHT AND SOCIAL LINKS -->
         <div class="footer-bottom">
 
-            © 2026 The Knot House.
-            Made with 🧶 and ❤️ by The Knot House Team.
+            <p>
+                © <span id="currentYear">2026</span> The Knot House.
+                Made with ♡ and yarn.
+            </p>
 
+            <div class="footer-socials">
+
+                <a href="https://www.instagram.com/crochet__creations_by_amrin/"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Instagram"
+                   title="Instagram">◎</a>
+
+                <a href="#"
+                   aria-label="Facebook"
+                   title="Facebook"
+                   onclick="showToast('Add your Facebook page link here.'); return false;">f</a>
+
+                <a href="#"
+                   aria-label="Pinterest"
+                   title="Pinterest"
+                   onclick="showToast('Add your Pinterest page link here.'); return false;">p</a>
+
+                <a href="#"
+                   aria-label="Additional social profile"
+                   title="Additional social profile"
+                   onclick="showToast('Add your social profile link here.'); return false;">个</a>
+
+            </div>
         </div>
-
-
     </footer>
 
-
-    <!-- =========================================================
-         TOAST
-         ========================================================= -->
-
-    <div
-        class="toast"
-        id="toast"
-    >
+    <!-- TOAST -->
+    <div class="toast" id="toast" role="status" aria-live="polite">
         Message sent successfully!
     </div>
 
-
-    <!-- =========================================================
-         BACK TO TOP
-         ========================================================= -->
-
-    <button
-        class="back-top"
-        id="backTop"
-        onclick="
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            })
-        "
-    >
-        ↑
-    </button>
-
-
-    <!-- =========================================================
-         JAVASCRIPT
-         ========================================================= -->
+    <!-- BACK TO TOP -->
+    <button class="back-top"
+            id="backTop"
+            aria-label="Back to top"
+            title="Back to top"
+            type="button">↑</button>
 
     <script>
+        "use strict";
 
+        /* PAGE LOADER */
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("pageLoader");
 
-        /* =====================================================
-           PAGE LOADER
-           ===================================================== */
-
-        window.addEventListener(
-            "load",
-            function () {
-
-                setTimeout(
-                    function () {
-
-                        document
-                            .getElementById("pageLoader")
-                            .classList
-                            .add("hide");
-
-                    },
-                    500
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           MOBILE MENU
-           ===================================================== */
-
-        const menuBtn =
-            document.getElementById("menuBtn");
-
-        const navLinks =
-            document.getElementById("navLinks");
-
-
-        menuBtn.addEventListener(
-            "click",
-            function () {
-
-                navLinks.classList.toggle("show");
-
-            }
-        );
-
-
-        document
-            .querySelectorAll(".nav-links a")
-            .forEach(
-                function (link) {
-
-                    link.addEventListener(
-                        "click",
-                        function () {
-
-                            navLinks
-                                .classList
-                                .remove("show");
-
-                        }
-                    );
-
+            window.setTimeout(function () {
+                if (loader) {
+                    loader.classList.add("hide");
                 }
-            );
+            }, 500);
+        });
 
+        /* FALLBACK IF PAGE LOAD EVENT HAS ALREADY FIRED */
+        window.setTimeout(function () {
+            const loader = document.getElementById("pageLoader");
 
-        /* =====================================================
-           CART COUNT
-           ===================================================== */
+            if (loader) {
+                loader.classList.add("hide");
+            }
+        }, 2500);
 
-        function updateCartCount() {
+        /* MOBILE MENU */
+        const menuBtn = document.getElementById("menuBtn");
+        const navLinks = document.getElementById("navLinks");
 
-            let cart =
-                JSON.parse(
-                    localStorage.getItem(
-                        "knotHouseCart"
-                    )
-                ) || [];
+        function closeMenu() {
+            if (!menuBtn || !navLinks) return;
 
-
-            let totalItems = 0;
-
-
-            cart.forEach(
-                function (item) {
-
-                    totalItems +=
-                        Number(item.quantity) || 1;
-
-                }
-            );
-
-
-            document
-                .getElementById("cartCount")
-                .textContent = totalItems;
-
+            navLinks.classList.remove("show");
+            menuBtn.setAttribute("aria-expanded", "false");
+            menuBtn.setAttribute("aria-label", "Open Menu");
+            menuBtn.textContent = "☰";
         }
 
+        if (menuBtn && navLinks) {
+            menuBtn.addEventListener("click", function () {
+                const isOpen = navLinks.classList.toggle("show");
+
+                menuBtn.setAttribute("aria-expanded", String(isOpen));
+                menuBtn.setAttribute(
+                    "aria-label",
+                    isOpen ? "Close Menu" : "Open Menu"
+                );
+
+                menuBtn.textContent = isOpen ? "✕" : "☰";
+            });
+
+            navLinks.querySelectorAll("a").forEach(function (link) {
+                link.addEventListener("click", closeMenu);
+            });
+
+            document.addEventListener("click", function (event) {
+                if (
+                    navLinks.classList.contains("show") &&
+                    !navLinks.contains(event.target) &&
+                    !menuBtn.contains(event.target)
+                ) {
+                    closeMenu();
+                }
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    closeMenu();
+                }
+            });
+
+            window.addEventListener("resize", function () {
+                if (window.innerWidth > 900) {
+                    closeMenu();
+                }
+            });
+        }
+
+        /* CART COUNT */
+        function updateCartCount() {
+            let cart = [];
+
+            try {
+                cart = JSON.parse(localStorage.getItem("knotHouseCart")) || [];
+
+                if (!Array.isArray(cart)) {
+                    cart = [];
+                }
+            } catch (error) {
+                cart = [];
+            }
+
+            const totalItems = cart.reduce(function (total, item) {
+                const quantity = Number(item && item.quantity);
+                return total + (Number.isFinite(quantity) && quantity > 0 ? quantity : 1);
+            }, 0);
+
+            const cartCount = document.getElementById("cartCount");
+
+            if (cartCount) {
+                cartCount.textContent = totalItems;
+            }
+        }
+
+        function openCart() {
+            window.location.href = "cart.html";
+        }
 
         updateCartCount();
 
+        window.addEventListener("storage", function (event) {
+            if (event.key === "knotHouseCart") {
+                updateCartCount();
+            }
+        });
 
-        /* =====================================================
-           OPEN CART
-           ===================================================== */
+        /* CONTACT FORM */
+        const contactForm = document.getElementById("contactForm");
+        const successMessage = document.getElementById("successMessage");
 
-        function openCart() {
-
-            window.location.href =
-                "cart.html";
-
-        }
-
-
-        /* =====================================================
-           CONTACT FORM
-           ===================================================== */
-
-        const contactForm =
-            document.getElementById(
-                "contactForm"
-            );
-
-
-        const successMessage =
-            document.getElementById(
-                "successMessage"
-            );
-
-
-        contactForm.addEventListener(
-            "submit",
-            function (event) {
-
+        if (contactForm) {
+            contactForm.addEventListener("submit", async function (event) {
                 event.preventDefault();
 
-
-                successMessage
-                    .classList
-                    .add("show");
-
-
-                showToast(
-                    "Message sent successfully! 💗"
-                );
-
-
-                contactForm.reset();
-
-
-                setTimeout(
-                    function () {
-
-                        successMessage
-                            .classList
-                            .remove("show");
-
-                    },
-                    5000
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           TOAST
-           ===================================================== */
-
-        let toastTimer;
-
-
-        function showToast(message) {
-
-            const toast =
-                document.getElementById(
-                    "toast"
-                );
-
-
-            toast.textContent =
-                message;
-
-
-            toast.classList.add(
-                "show"
-            );
-
-
-            clearTimeout(toastTimer);
-
-
-            toastTimer =
-                setTimeout(
-                    function () {
-
-                        toast.classList.remove(
-                            "show"
-                        );
-
-                    },
-                    2500
-                );
-
-        }
-
-
-        /* =====================================================
-           BACK TO TOP
-           ===================================================== */
-
-        const backTop =
-            document.getElementById(
-                "backTop"
-            );
-
-
-        window.addEventListener(
-            "scroll",
-            function () {
-
-                if (
-                    window.scrollY > 450
-                ) {
-
-                    backTop
-                        .classList
-                        .add("show");
-
-                } else {
-
-                    backTop
-                        .classList
-                        .remove("show");
-
+                if (!contactForm.reportValidity()) {
+                    return;
                 }
 
-            }
-        );
+                const formData = new FormData(contactForm);
+                const submitButton = contactForm.querySelector(".submit-btn");
+                const originalButtonText = "📨 Send Message";
 
+                submitButton.disabled = true;
+                submitButton.textContent = "Sending Message...";
 
+                try {
+                    const response = await fetch("contact.php", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (parseError) {
+                        throw new Error(
+                            "The server did not return valid JSON. Please check contact.php."
+                        );
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.message || "The server could not process your message."
+                        );
+                    }
+
+                    if (data.success) {
+                        if (successMessage) {
+                            successMessage.classList.add("show");
+                            successMessage.scrollIntoView({
+                                behavior: "smooth",
+                                block: "nearest"
+                            });
+                        }
+
+                        showToast("Message sent successfully! 💗");
+                        contactForm.reset();
+
+                        window.setTimeout(function () {
+                            if (successMessage) {
+                                successMessage.classList.remove("show");
+                            }
+                        }, 6000);
+                    } else {
+                        showToast(
+                            data.message || "Unable to send your message. Please try again."
+                        );
+                    }
+                } catch (error) {
+                    console.error("Contact form error:", error);
+                    showToast(
+                        error.message || "Unable to connect to the server. Please try again."
+                    );
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                }
+            });
+        }
+
+        /* TOAST */
+        let toastTimer;
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            if (!toast) return;
+
+            toast.textContent = message;
+            toast.classList.add("show");
+
+            window.clearTimeout(toastTimer);
+
+            toastTimer = window.setTimeout(function () {
+                toast.classList.remove("show");
+            }, 3500);
+        }
+
+        /* BACK TO TOP */
+        const backTop = document.getElementById("backTop");
+
+        if (backTop) {
+            backTop.addEventListener("click", function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 450) {
+                    backTop.classList.add("show");
+                } else {
+                    backTop.classList.remove("show");
+                }
+            });
+        }
+
+        /* AUTOMATIC COPYRIGHT YEAR */
+        const currentYear = document.getElementById("currentYear");
+
+        if (currentYear) {
+            currentYear.textContent = new Date().getFullYear();
+        }
     </script>
 
 </body>
-
 </html>

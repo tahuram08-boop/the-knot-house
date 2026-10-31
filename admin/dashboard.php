@@ -505,7 +505,7 @@ $conn->close();
 
             justify-content: center;
 
-            font-size: 22px;
+            font-size: 30px;
 
             color: white;
 
@@ -527,7 +527,7 @@ $conn->close();
             font-family:
                 "Playfair Display", serif;
 
-            font-size: 18px;
+            font-size: 25px;
 
             font-weight: 700;
 
@@ -854,7 +854,7 @@ $conn->close();
             font-family:
                 "Playfair Display", serif;
 
-            font-size: 23px;
+            font-size: 30px;
 
             color: var(--brown);
 
@@ -866,7 +866,7 @@ $conn->close();
 
             color: var(--brown-light);
 
-            font-size: 12px;
+            font-size: 14px;
 
             margin-top: 2px;
         }
@@ -900,7 +900,7 @@ $conn->close();
 
             color: var(--brown);
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -963,7 +963,7 @@ $conn->close();
 
             color: var(--brown);
 
-            font-size: 12px;
+            font-size: 15px;
         }
 
 
@@ -973,7 +973,7 @@ $conn->close();
 
             color: var(--brown-light);
 
-            font-size: 10px;
+            font-size: 13px;
 
             margin-top: 2px;
         }
@@ -1038,7 +1038,7 @@ $conn->close();
 
             color: var(--pink);
 
-            font-size: 11px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1053,7 +1053,7 @@ $conn->close();
             font-family:
                 "Playfair Display", serif;
 
-            font-size: 30px;
+            font-size: 33px;
 
             line-height: 1.2;
 
@@ -1210,7 +1210,7 @@ $conn->close();
 
         .stat-label {
 
-            font-size: 10px;
+            font-size: 13px;
 
             color: var(--brown-light);
 
@@ -1234,7 +1234,7 @@ $conn->close();
 
         .stat-note {
 
-            font-size: 9px;
+            font-size: 11px;
 
             color: var(--brown-light);
 
@@ -1263,7 +1263,7 @@ $conn->close();
             font-family:
                 "Playfair Display", serif;
 
-            font-size: 20px;
+            font-size: 25px;
 
             color: var(--brown);
         }
@@ -1273,7 +1273,7 @@ $conn->close();
 
             color: var(--brown-light);
 
-            font-size: 11px;
+            font-size: 13px;
         }
 
 
@@ -1347,7 +1347,7 @@ $conn->close();
 
         .quick-action h4 {
 
-            font-size: 13px;
+            font-size: 15px;
 
             color: var(--brown);
 
@@ -1357,7 +1357,7 @@ $conn->close();
 
         .quick-action p {
 
-            font-size: 10px;
+            font-size: 11px;
 
             color: var(--brown-light);
 
@@ -1420,7 +1420,7 @@ $conn->close();
             font-family:
                 "Playfair Display", serif;
 
-            font-size: 18px;
+            font-size: 25px;
 
             color: var(--brown);
         }
@@ -1428,7 +1428,7 @@ $conn->close();
 
         .panel-header p {
 
-            font-size: 10px;
+            font-size: 13px;
 
             color: var(--brown-light);
 
@@ -1438,7 +1438,7 @@ $conn->close();
 
         .panel-link {
 
-            font-size: 10px;
+            font-size: 13px;
 
             font-weight: 700;
 
@@ -1506,7 +1506,7 @@ $conn->close();
 
         .order-id {
 
-            font-size: 11px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1516,7 +1516,7 @@ $conn->close();
 
         .customer-name {
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1532,7 +1532,7 @@ $conn->close();
 
         .customer-email {
 
-            font-size: 9px;
+            font-size: 11px;
 
             color: var(--brown-light);
 
@@ -1548,7 +1548,7 @@ $conn->close();
 
         .order-amount {
 
-            font-size: 12px;
+            font-size: 15px;
 
             font-weight: 700;
 
@@ -1570,7 +1570,7 @@ $conn->close();
 
             border-radius: 7px;
 
-            font-size: 9px;
+            font-size: 11px;
 
             font-weight: 700;
 
@@ -1822,7 +1822,7 @@ $conn->close();
 
             justify-content: center;
 
-            font-size: 20px;
+            font-size: 26px;
         }
 
 
@@ -1831,7 +1831,7 @@ $conn->close();
             font-family:
                 "Playfair Display", serif;
 
-            font-size: 16px;
+            font-size: 20px;
 
             color: var(--brown);
 
@@ -1841,7 +1841,7 @@ $conn->close();
 
         .empty-small p {
 
-            font-size: 10px;
+            font-size: 15px;
 
             color: var(--brown-light);
 
@@ -2279,6 +2279,20 @@ $conn->close();
                 </span>
 
             </a>
+			<a
+                    href="message.php"
+                    class="nav-link"
+                >
+
+                    <span class="nav-icon">
+                        💌
+                    </span>
+
+                    <span>
+                        Messages
+                    </span>
+
+                </a>
 
         </div>
 

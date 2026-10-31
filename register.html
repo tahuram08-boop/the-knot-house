@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | The Knot House</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pink: #a96771;
+            --pink-dark: #8d555e;
+            --pink-light: #f8e8e7;
+            --cream: #fffaf7;
+            --brown: #513d3d;
+            --brown-light: #806969;
+            --border: #ead9d6;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "DM Sans", sans-serif;
+            background: linear-gradient(135deg, #fffaf7, #f8e8e7);
+            color: var(--brown);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--pink-dark);
+            text-decoration: none;
+        }
+
+        header {
+            background: rgba(255, 250, 247, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 6%;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--brown);
+        }
+
+        .logo img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .logo span {
+            font-family: "Playfair Display", serif;
+            font-size: 23px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            color: var(--pink);
+        }
+
+        main {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 18px;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--white);
+            padding: 38px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            box-shadow: 0 15px 45px rgba(141, 85, 94, 0.10);
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .heading .icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .heading h1 {
+            font-family: "Playfair Display", serif;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: var(--brown-light);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"] {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--brown);
+            background: var(--cream);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 3px rgba(169, 103, 113, 0.12);
+        }
+
+        .hint {
+            color: var(--brown-light);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 20px 0;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--brown-light);
+        }
+
+        .terms input {
+            margin-top: 3px;
+            accent-color: var(--pink);
+        }
+
+        .terms label {
+            font-size: 12px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: var(--pink);
+            color: var(--white);
+            padding: 14px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--pink-dark);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+            transform: none;
+        }
+
+        .login-text {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 13px;
+            color: var(--brown-light);
+        }
+
+        .login-text a {
+            font-weight: 700;
+        }
+
+        footer {
+            padding: 18px;
+            text-align: center;
+            color: var(--brown-light);
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 13px 5%;
+            }
+
+            .logo span {
+                font-size: 19px;
+            }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+            }
+
+            .register-card {
+                padding: 27px 21px;
+            }
+
+            .heading h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="navbar">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="The Knot House Logo">
+            <span>The Knot House</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="login.php">Login</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="register-card">
+        <div class="heading">
+            <div class="icon">🧶</div>
+            <h1>Create Account</h1>
+            <p>Join The Knot House and discover the beauty of handmade crochet.</p>
+        </div>
+
+        <form id="registerForm" action="register.php" method="POST" autocomplete="on">
+
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                    minlength="2"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email address"
+                    autocomplete="email"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number (Optional)</label>
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    autocomplete="tel"
+                    maxlength="20"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Create a password"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+                <p class="hint">Your password must contain at least 8 characters.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Enter your password again"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+            </div>
+
+            <div class="terms">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">
+                    I agree to the terms and conditions and confirm that the information provided is correct.
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Create My Account
+            </button>
+
+            <p class="login-text">
+                Already have an account?
+                <a href="login.php">Login here</a>
+            </p>
+
+        </form>
+    </section>
+</main>
+
+<footer>
+    © 2026 The Knot House. Handmade with love 🩷
+</footer>
+
+<script>
+    const registerForm = document.getElementById("registerForm");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirm_password");
+    const submitBtn = document.getElementById("submitBtn");
+
+    registerForm.addEventListener("submit", function (event) {
+        if (password.value.length < 8) {
+            event.preventDefault();
+            alert("Password must contain at least 8 characters.");
+            password.focus();
+            return;
+        }
+
+        if (password.value !== confirmPassword.value) {
+            event.preventDefault();
+            alert("Passwords do not match. Please enter the same password.");
+            confirmPassword.focus();
+            return;
+        }
+
+        if (!document.getElementById("terms").checked) {
+            event.preventDefault();
+            alert("Please accept the terms and conditions.");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating Account...";
+    });
+</script>
+
+</body>
+</html>

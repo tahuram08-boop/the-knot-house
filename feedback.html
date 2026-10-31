@@ -1,2231 +1,1837 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Feedback | The Knot House</title>
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-/* =========================================================
-   THE KNOT HOUSE - FEEDBACK PAGE
-   ========================================================= */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
-}
-
-:root {
-    --pink: #a96771;
-    --dark-pink: #8d555e;
-    --light-pink: #f8e8e7;
-    --pink-soft: #f3d8d9;
-
-    --cream: #fffaf7;
-    --cream-dark: #f6eee9;
-
-    --brown: #513d3d;
-    --brown-light: #806969;
-
-    --white: #ffffff;
-
-    --border: #ead9d6;
-    --gold: #c69b62;
-
-    --shadow: 0 20px 50px rgba(81, 61, 61, 0.10);
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: "DM Sans", sans-serif;
-    background: var(--cream);
-    color: var(--brown);
-    overflow-x: hidden;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button,
-input,
-textarea,
-select {
-    font-family: inherit;
-}
-
-
-/* =========================================================
-   PAGE LOADER
-   ========================================================= */
-
-.loader {
-    position: fixed;
-    inset: 0;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: 0.5s ease;
-}
-
-.loader-content {
-    text-align: center;
-}
-
-.loader-yarn {
-    font-size: 48px;
-    display: block;
-    animation: spinYarn 1.5s infinite linear;
-}
-
-.loader-content h3 {
-    margin-top: 15px;
-    font-family: "Playfair Display", serif;
-    letter-spacing: 3px;
-    color: var(--dark-pink);
-}
-
-@keyframes spinYarn {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    padding: 14px 5%;
-    background: rgba(255, 250, 247, 0.92);
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(169, 103, 113, 0.12);
-}
-
-.navbar {
-    max-width: 1400px;
-    margin: auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 25px;
-}
-
-
-/* LOGO */
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 22px;
-    font-weight: 700;
-
-    color: var(--dark-pink);
-    white-space: nowrap;
-}
-
-.logo img {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-}
-
-
-/* NAVIGATION */
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-}
-
-.nav-links a {
-    position: relative;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    color: var(--brown-light);
-
-    transition: 0.3s ease;
-}
-
-.nav-links a::after {
-    content: "";
-
-    position: absolute;
-    left: 0;
-    bottom: -7px;
-
-    width: 0;
-    height: 2px;
-
-    background: var(--pink);
-
-    transition: 0.3s ease;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: var(--pink);
-}
-
-.nav-links a:hover::after,
-.nav-links a.active::after {
-    width: 100%;
-}
-
-
-/* CART */
-
-.cart-btn {
-    position: relative;
-
-    border: none;
-    background: var(--light-pink);
-
-    width: 45px;
-    height: 45px;
-
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    font-size: 19px;
-
-    transition: 0.3s ease;
-}
-
-.cart-btn:hover {
-    background: var(--pink-soft);
-    transform: translateY(-2px);
-}
-
-.cart-count {
-    position: absolute;
-
-    top: -4px;
-    right: -3px;
-
-    width: 20px;
-    height: 20px;
-
-    border-radius: 50%;
-
-    background: var(--pink);
-    color: white;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-/* MOBILE MENU */
-
-.menu-btn {
-    display: none;
-
-    border: none;
-    background: var(--light-pink);
-
-    width: 43px;
-    height: 43px;
-
-    border-radius: 50%;
-
-    font-size: 20px;
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   HERO
-   ========================================================= */
-
-.hero {
-    min-height: 520px;
-
-    padding: 170px 6% 100px;
-
-    position: relative;
-    overflow: hidden;
-
-    background:
-        radial-gradient(circle at 10% 20%, rgba(243,216,217,0.8), transparent 30%),
-        radial-gradient(circle at 90% 70%, rgba(246,238,233,0.9), transparent 35%),
-        var(--cream);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-}
-
-.hero-content {
-    max-width: 800px;
-    position: relative;
-    z-index: 2;
-}
-
-.hero-label {
-    display: inline-block;
-
-    padding: 9px 18px;
-
-    background: var(--light-pink);
-    color: var(--dark-pink);
-
-    border-radius: 50px;
-
-    font-size: 12px;
-    font-weight: 700;
-
-    letter-spacing: 1.5px;
-
-    margin-bottom: 20px;
-}
-
-.hero h1 {
-    font-family: "Playfair Display", serif;
-
-    font-size: clamp(42px, 6vw, 76px);
-
-    line-height: 1.08;
-
-    color: var(--brown);
-
-    margin-bottom: 22px;
-}
-
-.hero h1 span {
-    color: var(--pink);
-}
-
-.hero p {
-    max-width: 650px;
-    margin: auto;
-
-    color: var(--brown-light);
-
-    font-size: 17px;
-    line-height: 1.8;
-}
-
-
-/* DECORATIONS */
-
-.decor {
-    position: absolute;
-    opacity: 0.35;
-    pointer-events: none;
-}
-
-.decor.one {
-    left: 7%;
-    top: 30%;
-    font-size: 55px;
-    animation: float 5s infinite ease-in-out;
-}
-
-.decor.two {
-    right: 8%;
-    top: 25%;
-    font-size: 45px;
-    animation: float 6s infinite ease-in-out reverse;
-}
-
-.decor.three {
-    left: 15%;
-    bottom: 15%;
-    font-size: 35px;
-    animation: float 4s infinite ease-in-out;
-}
-
-.decor.four {
-    right: 15%;
-    bottom: 12%;
-    font-size: 38px;
-    animation: float 5s infinite ease-in-out reverse;
-}
-
-@keyframes float {
-    0%,100% {
-        transform: translateY(0) rotate(0deg);
-    }
-
-    50% {
-        transform: translateY(-18px) rotate(8deg);
-    }
-}
-
-
-/* =========================================================
-   SECTION COMMON
-   ========================================================= */
-
-.section {
-    padding: 90px 6%;
-}
-
-.section-title {
-    text-align: center;
-    max-width: 750px;
-    margin: 0 auto 50px;
-}
-
-.section-title small {
-    color: var(--pink);
-
-    font-weight: 700;
-
-    letter-spacing: 2px;
-
-    font-size: 12px;
-}
-
-.section-title h2 {
-    font-family: "Playfair Display", serif;
-
-    font-size: clamp(34px, 4vw, 52px);
-
-    margin: 12px 0;
-
-    color: var(--brown);
-}
-
-.section-title p {
-    color: var(--brown-light);
-
-    line-height: 1.8;
-}
-
-
-/* =========================================================
-   FEEDBACK AREA
-   ========================================================= */
-
-.feedback-wrapper {
-    max-width: 1100px;
-
-    margin: auto;
-
-    display: grid;
-
-    grid-template-columns: 0.85fr 1.4fr;
-
-    gap: 35px;
-
-    align-items: stretch;
-}
-
-
-/* LEFT CARD */
-
-.feedback-intro {
-    background:
-        linear-gradient(
-            145deg,
-            var(--dark-pink),
-            var(--pink)
-        );
-
-    border-radius: 30px;
-
-    padding: 45px 38px;
-
-    color: white;
-
-    position: relative;
-
-    overflow: hidden;
-
-    box-shadow: var(--shadow);
-}
-
-.feedback-intro::before {
-    content: "🧶";
-
-    position: absolute;
-
-    right: -20px;
-    bottom: -20px;
-
-    font-size: 150px;
-
-    opacity: 0.08;
-}
-
-.feedback-intro h3 {
-    font-family: "Playfair Display", serif;
-
-    font-size: 34px;
-
-    margin-bottom: 18px;
-}
-
-.feedback-intro p {
-    line-height: 1.8;
-
-    color: rgba(255,255,255,0.88);
-
-    margin-bottom: 30px;
-}
-
-
-/* RATING DISPLAY */
-
-.rating-display {
-    padding: 22px;
-
-    background: rgba(255,255,255,0.12);
-
-    border: 1px solid rgba(255,255,255,0.18);
-
-    border-radius: 20px;
-
-    margin-top: 30px;
-}
-
-.rating-stars {
-    font-size: 27px;
-
-    letter-spacing: 5px;
-
-    margin-bottom: 8px;
-}
-
-.rating-display strong {
-    font-size: 28px;
-}
-
-.rating-display p {
-    margin: 3px 0 0;
-
-    font-size: 13px;
-}
-
-
-/* SMALL FEATURES */
-
-.feedback-points {
-    margin-top: 30px;
-
-    display: grid;
-
-    gap: 15px;
-}
-
-.feedback-point {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    font-size: 14px;
-}
-
-.feedback-point span {
-    width: 32px;
-    height: 32px;
-
-    background: rgba(255,255,255,0.15);
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-/* =========================================================
-   FORM CARD
-   ========================================================= */
-
-.feedback-form {
-    background: white;
-
-    border: 1px solid var(--border);
-
-    border-radius: 30px;
-
-    padding: 45px;
-
-    box-shadow: var(--shadow);
-}
-
-.feedback-form h3 {
-    font-family: "Playfair Display", serif;
-
-    font-size: 32px;
-
-    margin-bottom: 8px;
-}
-
-.feedback-form > p {
-    color: var(--brown-light);
-
-    font-size: 14px;
-
-    margin-bottom: 30px;
-}
-
-
-/* FORM GRID */
-
-.form-grid {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group.full {
-    grid-column: 1 / -1;
-}
-
-.form-group label {
-    display: block;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-    margin-bottom: 8px;
-
-    color: var(--brown);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-
-    border: 1px solid var(--border);
-
-    background: var(--cream);
-
-    padding: 14px 16px;
-
-    border-radius: 13px;
-
-    outline: none;
-
-    color: var(--brown);
-
-    transition: 0.3s ease;
-
-    font-size: 14px;
-}
-
-.form-group textarea {
-    min-height: 130px;
-
-    resize: vertical;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: var(--pink);
-
-    background: white;
-
-    box-shadow: 0 0 0 4px rgba(169,103,113,0.08);
-}
-
-
-/* =========================================================
-   STAR RATING
-   ========================================================= */
-
-.star-rating {
-    display: flex;
-
-    gap: 8px;
-
-    flex-direction: row-reverse;
-
-    justify-content: flex-end;
-}
-
-.star-rating input {
-    display: none;
-}
-
-.star-rating label {
-    font-size: 30px;
-
-    color: #d9c7c4;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
-}
-
-.star-rating label:hover,
-.star-rating label:hover ~ label,
-.star-rating input:checked ~ label {
-    color: var(--gold);
-
-    transform: scale(1.08);
-}
-
-
-/* EXPERIENCE BUTTONS */
-
-.experience-options {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-}
-
-.experience-options input {
-    display: none;
-}
-
-.experience-options label {
-    padding: 10px 16px;
-
-    border: 1px solid var(--border);
-
-    border-radius: 50px;
-
-    background: var(--cream);
-
-    cursor: pointer;
-
-    font-size: 13px;
-
-    transition: 0.3s ease;
-}
-
-.experience-options label:hover {
-    border-color: var(--pink);
-}
-
-.experience-options input:checked + label {
-    background: var(--light-pink);
-
-    color: var(--dark-pink);
-
-    border-color: var(--pink);
-}
-
-
-/* SUBMIT */
-
-.submit-btn {
-    width: 100%;
-
-    border: none;
-
-    padding: 16px;
-
-    border-radius: 50px;
-
-    background: var(--pink);
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition: 0.3s ease;
-
-    box-shadow: 0 12px 25px rgba(169,103,113,0.22);
-}
-
-.submit-btn:hover {
-    background: var(--dark-pink);
-
-    transform: translateY(-2px);
-
-    box-shadow: 0 16px 30px rgba(169,103,113,0.28);
-}
-
-
-/* SUCCESS */
-
-.success-message {
-    display: none;
-
-    margin-top: 20px;
-
-    padding: 15px 18px;
-
-    border-radius: 14px;
-
-    background: #edf7ee;
-
-    color: #47724d;
-
-    font-size: 14px;
-
-    text-align: center;
-}
-
-
-/* =========================================================
-   WHY FEEDBACK MATTERS
-   ========================================================= */
-
-.feedback-benefits {
-    background: var(--cream-dark);
-}
-
-.benefit-grid {
-    max-width: 1100px;
-
-    margin: auto;
-
-    display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 22px;
-}
-
-.benefit-card {
-    background: white;
-
-    padding: 32px 25px;
-
-    border-radius: 24px;
-
-    border: 1px solid var(--border);
-
-    text-align: center;
-
-    transition: 0.35s ease;
-}
-
-.benefit-card:hover {
-    transform: translateY(-8px);
-
-    box-shadow: var(--shadow);
-}
-
-.benefit-icon {
-    width: 65px;
-    height: 65px;
-
-    margin: auto auto 18px;
-
-    background: var(--light-pink);
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 28px;
-}
-
-.benefit-card h3 {
-    font-family: "Playfair Display", serif;
-
-    font-size: 23px;
-
-    margin-bottom: 10px;
-}
-
-.benefit-card p {
-    color: var(--brown-light);
-
-    font-size: 14px;
-
-    line-height: 1.7;
-}
-
-
-/* =========================================================
-   CTA
-   ========================================================= */
-
-.cta {
-    padding: 85px 6%;
-}
-
-.cta-box {
-    max-width: 1100px;
-
-    margin: auto;
-
-    padding: 60px 40px;
-
-    border-radius: 35px;
-
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(255,255,255,0.18),
-            transparent 30%
-        ),
-        var(--dark-pink);
-
-    color: white;
-
-    text-align: center;
-
-    position: relative;
-
-    overflow: hidden;
-}
-
-.cta-box::before {
-    content: "✿";
-
-    position: absolute;
-
-    left: 30px;
-    top: 20px;
-
-    font-size: 70px;
-
-    opacity: 0.12;
-}
-
-.cta-box::after {
-    content: "♡";
-
-    position: absolute;
-
-    right: 35px;
-    bottom: 15px;
-
-    font-size: 90px;
-
-    opacity: 0.12;
-}
-
-.cta-box h2 {
-    font-family: "Playfair Display", serif;
-
-    font-size: clamp(32px, 4vw, 48px);
-
-    margin-bottom: 15px;
-}
-
-.cta-box p {
-    max-width: 650px;
-
-    margin: auto auto 25px;
-
-    line-height: 1.8;
-
-    color: rgba(255,255,255,0.88);
-}
-
-.cta-btn {
-    display: inline-flex;
-
-    padding: 13px 24px;
-
-    border-radius: 50px;
-
-    background: white;
-
-    color: var(--dark-pink);
-
-    font-weight: 700;
-
-    transition: 0.3s ease;
-}
-
-.cta-btn:hover {
-    transform: translateY(-3px);
-
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-footer {
-    background: #493737;
-
-    color: white;
-
-    padding: 65px 6% 25px;
-}
-
-.footer-grid {
-    max-width: 1300px;
-
-    margin: auto;
-
-    display: grid;
-
-    grid-template-columns: 1.6fr 1fr 1fr 1fr;
-
-    gap: 45px;
-}
-
-.footer-brand h2 {
-    font-family: "Playfair Display", serif;
-
-    font-size: 28px;
-
-    margin-bottom: 15px;
-}
-
-.footer-brand p {
-    color: rgba(255,255,255,0.65);
-
-    line-height: 1.8;
-
-    max-width: 330px;
-}
-
-.footer-column h4 {
-    margin-bottom: 18px;
-
-    font-size: 14px;
-
-    letter-spacing: 1px;
-}
-
-.footer-column a {
-    display: block;
-
-    color: rgba(255,255,255,0.65);
-
-    font-size: 14px;
-
-    margin-bottom: 11px;
-
-    transition: 0.3s ease;
-}
-
-.footer-column a:hover {
-    color: white;
-
-    transform: translateX(4px);
-}
-
-.footer-bottom {
-    max-width: 1300px;
-
-    margin: 45px auto 0;
-
-    padding-top: 20px;
-
-    border-top: 1px solid rgba(255,255,255,0.12);
-
-    text-align: center;
-
-    color: rgba(255,255,255,0.5);
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-.toast {
-    position: fixed;
-
-    right: 25px;
-    bottom: 25px;
-
-    background: var(--brown);
-
-    color: white;
-
-    padding: 14px 20px;
-
-    border-radius: 50px;
-
-    font-size: 13px;
-
-    box-shadow: var(--shadow);
-
-    transform: translateY(100px);
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transition: 0.4s ease;
-
-    z-index: 9998;
-}
-
-.toast.show {
-    transform: translateY(0);
-
-    opacity: 1;
-}
-
-
-/* =========================================================
-   BACK TO TOP
-   ========================================================= */
-
-.back-top {
-    position: fixed;
-
-    right: 25px;
-    bottom: 80px;
-
-    width: 43px;
-    height: 43px;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: var(--pink);
-
-    color: white;
-
-    cursor: pointer;
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transform: translateY(15px);
-
-    transition: 0.3s ease;
-
-    z-index: 900;
-}
-
-.back-top.show {
-    opacity: 1;
-
-    pointer-events: auto;
-
-    transform: translateY(0);
-}
-
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 1050px) {
-
-    .nav-links {
-        gap: 15px;
-    }
-
-    .feedback-wrapper {
-        grid-template-columns: 1fr;
-        max-width: 850px;
-    }
-
-    .feedback-intro {
-        text-align: center;
-    }
-
-    .feedback-points {
-        grid-template-columns: repeat(2, 1fr);
-        text-align: left;
-    }
-
-    .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-
-@media (max-width: 850px) {
-
-    .nav-links {
-        position: absolute;
-
-        top: 76px;
-        left: 5%;
-        right: 5%;
-
-        background: rgba(255,250,247,0.98);
-
-        border: 1px solid var(--border);
-
-        border-radius: 20px;
-
-        padding: 20px;
-
-        display: none;
-
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        box-shadow: var(--shadow);
-    }
-
-    .nav-links.show {
-        display: flex;
-    }
-
-    .menu-btn {
-        display: block;
-    }
-
-    .navbar > .cart-btn {
-        margin-left: auto;
-    }
-
-    .hero {
-        padding-top: 150px;
-    }
-
-    .benefit-grid {
-        grid-template-columns: 1fr;
-        max-width: 550px;
-    }
-}
-
-
-@media (max-width: 600px) {
-
-    header {
-        padding: 11px 4%;
-    }
-
-    .logo {
-        font-size: 18px;
-    }
-
-    .logo img {
-        width: 42px;
-        height: 42px;
-    }
-
-    .hero {
-        min-height: 480px;
-
-        padding:
-            145px 6%
-            80px;
-    }
-
-    .hero h1 {
-        font-size: 42px;
-    }
-
-    .hero p {
-        font-size: 15px;
-    }
-
-    .section {
-        padding: 65px 5%;
-    }
-
-    .feedback-form {
-        padding: 28px 20px;
-    }
-
-    .feedback-intro {
-        padding: 35px 25px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .form-group.full {
-        grid-column: auto;
-    }
-
-    .feedback-points {
-        grid-template-columns: 1fr;
-    }
-
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-
-    .cta-box {
-        padding: 50px 25px;
-    }
-
-    .toast {
-        left: 20px;
-        right: 20px;
-        bottom: 20px;
-
-        text-align: center;
-    }
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Feedback | The Knot House</title>
+    <meta name="description" content="Share your experience and feedback with The Knot House. Your thoughts help us improve our handmade crochet creations.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =====================================================
+           THE KNOT HOUSE - FEEDBACK PAGE
+           ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --pink: #a96771;
+            --dark-pink: #8d555e;
+            --light-pink: #f8e8e7;
+            --pink-soft: #f3d8d9;
+            --cream: #fffaf7;
+            --cream-dark: #f6eee9;
+            --brown: #513d3d;
+            --brown-light: #806969;
+            --white: #ffffff;
+            --border: #ead9d6;
+            --gold: #c69b62;
+            --shadow: 0 20px 50px rgba(81, 61, 61, 0.10);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            background: var(--cream);
+            color: var(--brown);
+            overflow-x: hidden;
+        }
+
+        body, button, input, textarea, select {
+            font-family: "DM Sans", sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* =====================================================
+           PAGE LOADER
+           ===================================================== */
+
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-yarn {
+            display: block;
+            font-size: 48px;
+            animation: spinYarn 1.5s linear infinite;
+        }
+
+        .loader-content h3 {
+            margin-top: 15px;
+            font-family: "Playfair Display", serif;
+            letter-spacing: 3px;
+            color: var(--dark-pink);
+        }
+
+        @keyframes spinYarn {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =====================================================
+           HEADER - MATCHING INDEX PAGE
+           ===================================================== */
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 0;
+            background: rgba(255, 250, 247, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(234, 217, 214, 0.8);
+        }
+
+        .navbar {
+            max-width: 1250px;
+            min-height: 82px;
+            margin: auto;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        /* LOGO */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .logo span {
+            font-family: "Playfair Display", serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-pink);
+            white-space: nowrap;
+        }
+
+        /* NAVIGATION */
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            list-style: none;
+            flex-wrap: nowrap;
+        }
+
+        .nav-links a {
+            position: relative;
+            display: block;
+            padding: 10px 8px;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            color: var(--brown-light);
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 11px;
+            right: 11px;
+            bottom: 3px;
+            height: 2px;
+            background: var(--pink);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--dark-pink);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            transform: scaleX(1);
+        }
+
+        /* PROFILE, CART AND MENU ACTIONS */
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .profile-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            font-size: 20px;
+            flex-shrink: 0;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background: var(--pink-soft);
+            transform: translateY(-2px);
+        }
+
+        .cart-btn {
+            position: relative;
+            min-width: 50px;
+            height: 44px;
+            padding: 0 13px;
+            border: none;
+            border-radius: 50px;
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            cursor: pointer;
+            font-size: 20px;
+            transition: background 0.3s ease, transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .cart-btn:hover {
+            background: var(--pink-soft);
+            transform: translateY(-2px);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -4px;
+            right: -3px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--dark-pink);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .menu-btn {
+            display: none;
+            border: none;
+            width: 43px;
+            height: 43px;
+            border-radius: 50%;
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            font-size: 21px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* =====================================================
+           HERO
+           ===================================================== */
+
+        .hero {
+            min-height: 520px;
+            padding: 170px 6% 100px;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(243, 216, 217, 0.8), transparent 30%),
+                radial-gradient(circle at 90% 70%, rgba(246, 238, 233, 0.9), transparent 35%),
+                var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-label {
+            display: inline-block;
+            padding: 9px 18px;
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 6vw, 76px);
+            line-height: 1.08;
+            color: var(--brown);
+            margin-bottom: 22px;
+        }
+
+        .hero h1 span {
+            color: var(--pink);
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: auto;
+            color: var(--brown-light);
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .decor {
+            position: absolute;
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .decor.one {
+            left: 7%;
+            top: 30%;
+            font-size: 55px;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        .decor.two {
+            right: 8%;
+            top: 25%;
+            font-size: 45px;
+            animation: float 6s infinite ease-in-out reverse;
+        }
+
+        .decor.three {
+            left: 15%;
+            bottom: 15%;
+            font-size: 35px;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        .decor.four {
+            right: 15%;
+            bottom: 12%;
+            font-size: 38px;
+            animation: float 5s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-18px) rotate(8deg); }
+        }
+
+        /* =====================================================
+           COMMON SECTION STYLES
+           ===================================================== */
+
+        .section {
+            padding: 90px 6%;
+        }
+
+        .section-title {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 50px;
+        }
+
+        .section-title small {
+            color: var(--pink);
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 12px;
+        }
+
+        .section-title h2 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(34px, 4vw, 52px);
+            margin: 12px 0;
+            color: var(--brown);
+        }
+
+        .section-title p {
+            color: var(--brown-light);
+            line-height: 1.8;
+        }
+
+        /* =====================================================
+           FEEDBACK AREA
+           ===================================================== */
+
+        .feedback-wrapper {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 0.85fr 1.4fr;
+            gap: 35px;
+            align-items: stretch;
+        }
+
+        .feedback-intro {
+            background: linear-gradient(145deg, var(--dark-pink), var(--pink));
+            border-radius: 30px;
+            padding: 45px 38px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .feedback-intro::before {
+            content: "🧶";
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 150px;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .feedback-intro h3 {
+            font-family: "Playfair Display", serif;
+            font-size: 34px;
+            margin-bottom: 18px;
+        }
+
+        .feedback-intro > p {
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.88);
+            margin-bottom: 30px;
+        }
+
+        .rating-display {
+            padding: 22px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            margin-top: 30px;
+        }
+
+        .rating-stars {
+            font-size: 27px;
+            letter-spacing: 5px;
+            margin-bottom: 8px;
+            color: #ffe5a8;
+        }
+
+        .rating-display strong {
+            font-size: 28px;
+        }
+
+        .rating-display p {
+            margin: 3px 0 0;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .feedback-points {
+            margin-top: 30px;
+            display: grid;
+            gap: 15px;
+        }
+
+        .feedback-point {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .feedback-point span {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* =====================================================
+           FEEDBACK FORM
+           ===================================================== */
+
+        .feedback-form {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 45px;
+            box-shadow: var(--shadow);
+        }
+
+        .feedback-form h3 {
+            font-family: "Playfair Display", serif;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .feedback-form > p {
+            color: var(--brown-light);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            min-width: 0;
+            margin-bottom: 20px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--brown);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: var(--cream);
+            padding: 14px 16px;
+            border-radius: 13px;
+            outline: none;
+            color: var(--brown);
+            transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            font-size: 14px;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #a38e8b;
+        }
+
+        .form-group textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--pink);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(169, 103, 113, 0.08);
+        }
+
+        /* STAR RATING */
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .star-rating input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+        }
+
+        .star-rating label {
+            font-size: 30px;
+            line-height: 1.3;
+            color: #d9c7c4;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: var(--gold);
+        }
+
+        .star-rating label:hover {
+            transform: scale(1.08);
+        }
+
+        .star-rating input:focus-visible + label {
+            outline: 2px solid var(--dark-pink);
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+
+        /* EXPERIENCE OPTIONS */
+
+        .experience-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .experience-options input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+        }
+
+        .experience-options label {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            background: var(--cream);
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .experience-options label:hover {
+            border-color: var(--pink);
+        }
+
+        .experience-options input:checked + label {
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            border-color: var(--pink);
+        }
+
+        .experience-options input:focus-visible + label {
+            outline: 2px solid var(--dark-pink);
+            outline-offset: 3px;
+        }
+
+        /* SUBMIT BUTTON */
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            padding: 16px;
+            border-radius: 50px;
+            background: var(--pink);
+            color: var(--white);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 12px 25px rgba(169, 103, 113, 0.22);
+        }
+
+        .submit-btn:hover {
+            background: var(--dark-pink);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px rgba(169, 103, 113, 0.28);
+        }
+
+        .submit-btn:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 4px;
+        }
+
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            padding: 15px 18px;
+            border-radius: 14px;
+            background: #edf7ee;
+            color: #47724d;
+            font-size: 14px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        /* =====================================================
+           WHY FEEDBACK MATTERS
+           ===================================================== */
+
+        .feedback-benefits {
+            background: var(--cream-dark);
+        }
+
+        .benefit-grid {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .benefit-card {
+            background: var(--white);
+            padding: 32px 25px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow);
+        }
+
+        .benefit-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            background: var(--light-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .benefit-card h3 {
+            font-family: "Playfair Display", serif;
+            font-size: 23px;
+            margin-bottom: 10px;
+        }
+
+        .benefit-card p {
+            color: var(--brown-light);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* =====================================================
+           CALL TO ACTION
+           ===================================================== */
+
+        .cta {
+            padding: 85px 6%;
+        }
+
+        .cta-box {
+            max-width: 1100px;
+            margin: auto;
+            padding: 60px 40px;
+            border-radius: 35px;
+            background:
+                radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 30%),
+                var(--dark-pink);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: "✿";
+            position: absolute;
+            left: 30px;
+            top: 20px;
+            font-size: 70px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        .cta-box::after {
+            content: "♡";
+            position: absolute;
+            right: 35px;
+            bottom: 15px;
+            font-size: 90px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        .cta-box h2 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 15px;
+        }
+
+        .cta-box p {
+            max-width: 650px;
+            margin: 0 auto 25px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 24px;
+            border-radius: 50px;
+            background: var(--white);
+            color: var(--dark-pink);
+            font-weight: 700;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        /* =====================================================
+           FOOTER - MATCHING INDEX PAGE
+           ===================================================== */
+
+        footer {
+            padding: 60px 0 25px;
+            background: #4b3838;
+            color: var(--white);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            width: 92%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr 1fr;
+            gap: 45px;
+            padding-bottom: 45px;
+        }
+
+        .footer-brand,
+        .footer-column {
+            min-width: 0;
+        }
+
+        .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Playfair Display", serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 18px;
+        }
+
+        .footer-logo img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .footer-logo span {
+            white-space: nowrap;
+        }
+
+        .footer-brand > p {
+            max-width: 330px;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 14px;
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+
+        .footer-column h3 {
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 19px;
+        }
+
+        .footer-column a {
+            display: block;
+            width: fit-content;
+            max-width: 100%;
+            color: rgba(255, 255, 255, 0.76);
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--white);
+        }
+
+        .footer-contact-text {
+            color: rgba(255, 255, 255, 0.76);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            width: 92%;
+            margin: 0 auto;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .footer-bottom p {
+            color: rgba(255, 255, 255, 0.70);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer-socials {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-socials a {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.10);
+            color: var(--white);
+            font-size: 15px;
+            font-weight: 700;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-socials a:hover {
+            background: var(--pink);
+            transform: translateY(-3px);
+        }
+
+        /* =====================================================
+           TOAST
+           ===================================================== */
+
+        .toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            max-width: calc(100% - 40px);
+            background: var(--brown);
+            color: var(--white);
+            padding: 14px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            line-height: 1.5;
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            z-index: 9998;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* =====================================================
+           BACK TO TOP
+           ===================================================== */
+
+        .back-top {
+            position: fixed;
+            right: 25px;
+            bottom: 80px;
+            width: 43px;
+            height: 43px;
+            border: none;
+            border-radius: 50%;
+            background: var(--pink);
+            color: var(--white);
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(15px);
+            transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+            z-index: 900;
+        }
+
+        .back-top.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .back-top:hover {
+            background: var(--dark-pink);
+        }
+
+        /* =====================================================
+           RESPONSIVE DESIGN
+           ===================================================== */
+
+        @media (max-width: 1250px) {
+            .navbar {
+                gap: 12px;
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .logo span {
+                font-size: 20px;
+            }
+
+            .nav-links a {
+                padding-left: 5px;
+                padding-right: 5px;
+                font-size: 12px;
+            }
+
+            .footer-container {
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .feedback-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 850px;
+            }
+
+            .feedback-intro {
+                text-align: center;
+            }
+
+            .feedback-points {
+                grid-template-columns: repeat(2, 1fr);
+                text-align: left;
+            }
+
+            .footer-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .navbar {
+                gap: 10px;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .nav-actions {
+                margin-left: auto;
+                gap: 8px;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 82px;
+                left: 20px;
+                right: 20px;
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+                background: rgba(255, 250, 247, 0.98);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                box-shadow: var(--shadow);
+                gap: 0;
+                max-height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 13px 15px;
+                border-radius: 10px;
+                font-size: 14px;
+            }
+
+            .nav-links a::after {
+                display: none;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                background: var(--light-pink);
+            }
+
+            .hero {
+                padding-top: 150px;
+            }
+
+            .benefit-grid {
+                grid-template-columns: 1fr;
+                max-width: 550px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .navbar {
+                padding: 10px 16px;
+                min-height: 72px;
+            }
+
+            .logo span {
+                font-size: 19px;
+            }
+
+            .logo img {
+                width: 42px;
+                height: 42px;
+            }
+
+            .nav-links {
+                top: 72px;
+                left: 12px;
+                right: 12px;
+            }
+
+            .hero {
+                min-height: 480px;
+                padding: 135px 6% 80px;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .section {
+                padding: 65px 5%;
+            }
+
+            .feedback-form {
+                padding: 28px 20px;
+            }
+
+            .feedback-form h3 {
+                font-size: 28px;
+            }
+
+            .feedback-intro {
+                padding: 35px 25px;
+            }
+
+            .feedback-intro h3 {
+                font-size: 30px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .feedback-points {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding-bottom: 35px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cta {
+                padding: 60px 5%;
+            }
+
+            .cta-box {
+                padding: 50px 25px;
+            }
+
+            .toast {
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
+                max-width: none;
+                text-align: center;
+                border-radius: 16px;
+            }
+
+            .back-top {
+                right: 18px;
+                bottom: 75px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .navbar {
+                gap: 8px;
+            }
+
+            .logo {
+                gap: 7px;
+            }
+
+            .logo span {
+                font-size: 17px;
+            }
+
+            .nav-actions {
+                gap: 6px;
+            }
+
+            .profile-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+
+            .cart-btn {
+                min-width: 38px;
+                width: 38px;
+                height: 38px;
+                padding: 0;
+                font-size: 17px;
+            }
+
+            .menu-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 19px;
+            }
+
+            .hero h1 {
+                font-size: 37px;
+            }
+
+            .experience-options {
+                gap: 8px;
+            }
+
+            .experience-options label {
+                padding: 9px 12px;
+                font-size: 12px;
+            }
+
+            .footer-logo {
+                font-size: 20px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
-
-<!-- =========================================================
-     LOADER
-     ========================================================= -->
-
-<div class="loader" id="loader">
-
-    <div class="loader-content">
-
-        <span class="loader-yarn">🧶</span>
-
-        <h3>THE KNOT HOUSE</h3>
-
-    </div>
-
-</div>
-
-
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
-
-<header>
-
-    <div class="navbar">
-
-        <a href="index.html" class="logo">
-
-            <img src="./logo.png" alt="The Knot House Logo">
-
-            <span>The Knot House</span>
-
-        </a>
-
-
-        <nav class="nav-links" id="navLinks">
-
-            <a href="index.html">Home</a>
-
-            <a href="about.html">About Us</a>
-
-            <a href="product.html">Products</a>
-
-            <a href="gallery.html">Gallery</a>
-
-            <a href="contact.html">Contact Us</a>
-
-            <a href="feedback.html" class="active">Feedback</a>
-
-            <a href="faq.html">FAQ</a>
-
-        </nav>
-
-
-        <button class="cart-btn" onclick="openCart()" aria-label="Open Cart">
-
-            🛒
-
-            <span class="cart-count" id="cartCount">0</span>
-
-        </button>
-
-
-        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">
-
-            ☰
-
-        </button>
-
-    </div>
-
-</header>
-
-
-<!-- =========================================================
-     HERO
-     ========================================================= -->
-
-<section class="hero">
-
-    <div class="decor one">✿</div>
-
-    <div class="decor two">♡</div>
-
-    <div class="decor three">🧶</div>
-
-    <div class="decor four">✦</div>
-
-
-    <div class="hero-content">
-
-        <div class="hero-label">
-            🧶 YOUR THOUGHTS MATTER
+    <!-- PAGE LOADER -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <span class="loader-yarn">🧶</span>
+            <h3>THE KNOT HOUSE</h3>
         </div>
-
-        <h1>
-            Share Your <span>Feedback</span>
-        </h1>
-
-        <p>
-            Every stitch we create is made with love.
-            Your feedback helps us learn, improve,
-            and make The Knot House even more special.
-        </p>
-
     </div>
 
-</section>
-
-
-<!-- =========================================================
-     FEEDBACK SECTION
-     ========================================================= -->
-
-<section class="section">
-
-    <div class="section-title">
-
-        <small>💌 WE'D LOVE TO HEAR FROM YOU</small>
-
-        <h2>
-            Tell Us About Your Experience
-        </h2>
-
-        <p>
-            Whether you loved your crochet piece,
-            have a suggestion, or simply want to share
-            your thoughts, we'd love to hear from you.
-        </p>
-
-    </div>
-
-
-    <div class="feedback-wrapper">
-
-
-        <!-- LEFT -->
-
-        <div class="feedback-intro">
-
-            <h3>
-                Your Words Inspire Us
-            </h3>
-
-            <p>
-                Handmade creations become even more
-                meaningful when they bring happiness.
-                Your feedback helps us understand what
-                you love and where we can improve.
-            </p>
-
-
-            <div class="rating-display">
-
-                <div class="rating-stars">
-                    ★★★★★
-                </div>
-
-                <strong>5.0</strong>
-
-                <p>
-                    Handmade with love, one stitch at a time.
-                </p>
-
-            </div>
-
-
-            <div class="feedback-points">
-
-                <div class="feedback-point">
-
-                    <span>♡</span>
-
-                    <div>
-                        Honest opinions
-                    </div>
-
-                </div>
-
-
-                <div class="feedback-point">
-
-                    <span>✦</span>
-
-                    <div>
-                        Helpful suggestions
-                    </div>
-
-                </div>
-
-
-                <div class="feedback-point">
-
-                    <span>🧶</span>
-
-                    <div>
-                        Crochet experiences
-                    </div>
-
-                </div>
-
-
-                <div class="feedback-point">
-
-                    <span>🌸</span>
-
-                    <div>
-                        Ideas for improvement
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- FORM -->
-
-        <div class="feedback-form">
-
-            <h3>
-                Leave Your Feedback
-            </h3>
-
-            <p>
-                It only takes a minute — and it means a lot to us. 💗
-            </p>
-
-
-            <form id="feedbackForm">
-
-
-                <div class="form-grid">
-
-
-                    <!-- NAME -->
-
-                    <div class="form-group">
-
-                        <label for="name">
-                            Your Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="name"
-                            placeholder="Enter your name"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- EMAIL -->
-
-                    <div class="form-group">
-
-                        <label for="email">
-                            Email Address
-                        </label>
-
-                        <input
-                            type="email"
-                            id="email"
-                            placeholder="Enter your email"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- RATING -->
-
-                    <div class="form-group full">
-
-                        <label>
-                            How would you rate your experience?
-                        </label>
-
-                        <div class="star-rating">
-
-                            <input
-                                type="radio"
-                                id="star5"
-                                name="rating"
-                                value="5"
-                                required
-                            >
-                            <label for="star5">★</label>
-
-
-                            <input
-                                type="radio"
-                                id="star4"
-                                name="rating"
-                                value="4"
-                            >
-                            <label for="star4">★</label>
-
-
-                            <input
-                                type="radio"
-                                id="star3"
-                                name="rating"
-                                value="3"
-                            >
-                            <label for="star3">★</label>
-
-
-                            <input
-                                type="radio"
-                                id="star2"
-                                name="rating"
-                                value="2"
-                            >
-                            <label for="star2">★</label>
-
-
-                            <input
-                                type="radio"
-                                id="star1"
-                                name="rating"
-                                value="1"
-                            >
-                            <label for="star1">★</label>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- EXPERIENCE -->
-
-                    <div class="form-group full">
-
-                        <label>
-                            How was your overall experience?
-                        </label>
-
-                        <div class="experience-options">
-
-                            <input
-                                type="radio"
-                                name="experience"
-                                id="excellent"
-                                value="Excellent"
-                                required
-                            >
-
-                            <label for="excellent">
-                                😍 Excellent
-                            </label>
-
-
-                            <input
-                                type="radio"
-                                name="experience"
-                                id="good"
-                                value="Good"
-                            >
-
-                            <label for="good">
-                                😊 Good
-                            </label>
-
-
-                            <input
-                                type="radio"
-                                name="experience"
-                                id="average"
-                                value="Average"
-                            >
-
-                            <label for="average">
-                                🙂 Average
-                            </label>
-
-
-                            <input
-                                type="radio"
-                                name="experience"
-                                id="improve"
-                                value="Needs Improvement"
-                            >
-
-                            <label for="improve">
-                                💭 Needs Improvement
-                            </label>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- SUBJECT -->
-
-                    <div class="form-group full">
-
-                        <label for="subject">
-                            Feedback About
-                        </label>
-
-                        <select id="subject" required>
-
-                            <option value="">
-                                Select an option
-                            </option>
-
-                            <option>
-                                Product Quality
-                            </option>
-
-                            <option>
-                                Product Design
-                            </option>
-
-                            <option>
-                                Website Experience
-                            </option>
-
-                            <option>
-                                Customer Service
-                            </option>
-
-                            <option>
-                                Delivery / Order
-                            </option>
-
-                            <option>
-                                Customisation
-                            </option>
-
-                            <option>
-                                General Feedback
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- MESSAGE -->
-
-                    <div class="form-group full">
-
-                        <label for="message">
-                            Your Feedback
-                        </label>
-
-                        <textarea
-                            id="message"
-                            placeholder="Tell us what you loved or what we can improve..."
-                            required
-                        ></textarea>
-
-                    </div>
-
-
-                </div>
-
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header>
+        <div class="navbar">
+
+            <a href="index.html" class="logo" aria-label="The Knot House Home">
+                <img src="./logo.png" alt="The Knot House Logo">
+                <span>The Knot House</span>
+            </a>
+
+            <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="product.html">Products</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="feedback.html" class="active" aria-current="page">Feedback</a>
+                <a href="faq.html">FAQ</a>
+                <a href="track-order.html">Track Order</a>
+                <a href="my-messages.php">My Message</a>
+            </nav>
+
+            <div class="nav-actions">
+
+                <a href="login.html"
+                   class="profile-btn"
+                   aria-label="My Account"
+                   title="My Account">👤</a>
 
                 <button
-                    type="submit"
-                    class="submit-btn"
-                >
-                    💌 Submit Feedback
+                    class="cart-btn"
+                    type="button"
+                    onclick="openCart()"
+                    aria-label="Open shopping cart"
+                    title="Shopping Cart">
+                    🛒
+                    <span class="cart-count" id="cartCount">0</span>
                 </button>
 
+                <button
+                    class="menu-btn"
+                    type="button"
+                    id="menuBtn"
+                    onclick="toggleMenu()"
+                    aria-label="Open navigation menu"
+                    aria-expanded="false"
+                    aria-controls="navLinks">☰</button>
 
-                <div
-                    class="success-message"
-                    id="successMessage"
-                >
-                    ✨ Thank you for your lovely feedback!
-                    Your thoughts mean a lot to The Knot House. 💗
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="hero">
+        <div class="decor one">✿</div>
+        <div class="decor two">♡</div>
+        <div class="decor three">🧶</div>
+        <div class="decor four">✦</div>
+
+        <div class="hero-content">
+            <div class="hero-label">🧶 YOUR THOUGHTS MATTER</div>
+            <h1>Share Your <span>Feedback</span></h1>
+            <p>
+                Every stitch we create is made with love.
+                Your feedback helps us learn, improve, and make
+                The Knot House even more special.
+            </p>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         FEEDBACK SECTION
+         ===================================================== -->
+
+    <section class="section">
+        <div class="section-title">
+            <small>💌 WE'D LOVE TO HEAR FROM YOU</small>
+            <h2>Tell Us About Your Experience</h2>
+            <p>
+                Whether you loved your crochet piece, have a suggestion,
+                or simply want to share your thoughts, we'd love to hear from you.
+            </p>
+        </div>
+
+        <div class="feedback-wrapper">
+
+            <div class="feedback-intro">
+                <h3>Your Words Inspire Us</h3>
+                <p>
+                    Handmade creations become even more meaningful when
+                    they bring happiness. Your feedback helps us understand
+                    what you love and where we can improve.
+                </p>
+
+                <div class="rating-display">
+                    <div class="rating-stars" aria-label="Five stars">★★★★★</div>
+                    <strong>5.0</strong>
+                    <p>Handmade with love, one stitch at a time.</p>
                 </div>
 
-            </form>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     WHY FEEDBACK MATTERS
-     ========================================================= -->
-
-<section class="section feedback-benefits">
-
-    <div class="section-title">
-
-        <small>🌸 WHY IT MATTERS</small>
-
-        <h2>
-            Your Feedback Helps Us Grow
-        </h2>
-
-        <p>
-            Every suggestion and every kind word helps
-            us make better handmade experiences.
-        </p>
-
-    </div>
-
-
-    <div class="benefit-grid">
-
-
-        <div class="benefit-card">
-
-            <div class="benefit-icon">
-                🧶
+                <div class="feedback-points">
+                    <div class="feedback-point"><span>♡</span><div>Honest opinions</div></div>
+                    <div class="feedback-point"><span>✦</span><div>Helpful suggestions</div></div>
+                    <div class="feedback-point"><span>🧶</span><div>Crochet experiences</div></div>
+                    <div class="feedback-point"><span>🌸</span><div>Ideas for improvement</div></div>
+                </div>
             </div>
 
-            <h3>
-                Better Products
-            </h3>
+            <!-- FEEDBACK FORM -->
 
+            <div class="feedback-form">
+                <h3>Leave Your Feedback</h3>
+                <p>It only takes a minute — and it means a lot to us. 💗</p>
+
+                <form id="feedbackForm">
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name"
+                                   placeholder="Enter your name"
+                                   autocomplete="name" maxlength="100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email"
+                                   placeholder="Enter your email"
+                                   autocomplete="email" maxlength="150" required>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>How would you rate your experience?</label>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5" title="5 stars">★</label>
+
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4" title="4 stars">★</label>
+
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3" title="3 stars">★</label>
+
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2" title="2 stars">★</label>
+
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1" title="1 star">★</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>How was your overall experience?</label>
+                            <div class="experience-options">
+                                <input type="radio" name="experience" id="excellent" value="Excellent" required>
+                                <label for="excellent">😍 Excellent</label>
+
+                                <input type="radio" name="experience" id="good" value="Good">
+                                <label for="good">😊 Good</label>
+
+                                <input type="radio" name="experience" id="average" value="Average">
+                                <label for="average">🙂 Average</label>
+
+                                <input type="radio" name="experience" id="improve" value="Needs Improvement">
+                                <label for="improve">💭 Needs Improvement</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="subject">Feedback About</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select an option</option>
+                                <option value="Product Quality">Product Quality</option>
+                                <option value="Product Design">Product Design</option>
+                                <option value="Website Experience">Website Experience</option>
+                                <option value="Customer Service">Customer Service</option>
+                                <option value="Delivery / Order">Delivery / Order</option>
+                                <option value="Customisation">Customisation</option>
+                                <option value="General Feedback">General Feedback</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="message">Your Feedback</label>
+                            <textarea id="message" name="message"
+                                      placeholder="Tell us what you loved or what we can improve..."
+                                      maxlength="2000" required></textarea>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        💌 Submit Feedback
+                    </button>
+
+                    <div class="success-message" id="successMessage"
+                         role="status" aria-live="polite">
+                        ✨ Thank you for your lovely feedback!
+                        Your thoughts mean a lot to The Knot House. 💗
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         WHY FEEDBACK MATTERS
+         ===================================================== -->
+
+    <section class="section feedback-benefits">
+        <div class="section-title">
+            <small>🌸 WHY IT MATTERS</small>
+            <h2>Your Feedback Helps Us Grow</h2>
             <p>
-                Your ideas help us improve our crochet
-                designs, quality, colours and collections.
+                Every suggestion and every kind word helps us make
+                better handmade experiences.
             </p>
-
         </div>
 
-
-        <div class="benefit-card">
-
-            <div class="benefit-icon">
-                💗
+        <div class="benefit-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">🧶</div>
+                <h3>Better Products</h3>
+                <p>
+                    Your ideas help us improve our crochet designs,
+                    quality, colours and collections.
+                </p>
             </div>
 
-            <h3>
-                Happier Customers
-            </h3>
-
-            <p>
-                We want every person who visits The Knot
-                House to enjoy a warm handmade experience.
-            </p>
-
-        </div>
-
-
-        <div class="benefit-card">
-
-            <div class="benefit-icon">
-                ✨
+            <div class="benefit-card">
+                <div class="benefit-icon">💗</div>
+                <h3>Happier Customers</h3>
+                <p>
+                    We want every person who visits The Knot House
+                    to enjoy a warm handmade experience.
+                </p>
             </div>
 
-            <h3>
-                New Ideas
-            </h3>
+            <div class="benefit-card">
+                <div class="benefit-icon">✨</div>
+                <h3>New Ideas</h3>
+                <p>
+                    Your suggestions can inspire our next crochet
+                    creations and custom designs.
+                </p>
+            </div>
+        </div>
+    </section>
 
+    <!-- =====================================================
+         CALL TO ACTION
+         ===================================================== -->
+
+    <section class="cta">
+        <div class="cta-box">
+            <h2>Have A Crochet Idea?</h2>
             <p>
-                Your suggestions can inspire our next
-                crochet creations and custom designs.
+                Tell us what you are imagining. From cute bags to flowers,
+                plushies and personalised creations — your idea can become
+                something beautifully handmade.
+            </p>
+            <a href="contact.html" class="cta-btn">🪡 Contact Us</a>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer>
+        <div class="footer-container">
+
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">
+                    <img src="./logo.png" alt="The Knot House Logo" loading="lazy">
+                    <span>The Knot House</span>
+                </a>
+                <p>
+                    A little place for handmade happiness, where every loop,
+                    stitch and creation is made with love.
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="product.html">Products</a>
+                <a href="gallery.html">Gallery</a>
+            </div>
+
+            <div class="footer-column">
+                <h3>Help</h3>
+                <a href="contact.html">Contact Us</a>
+                <a href="feedback.html">Feedback</a>
+                <a href="faq.html">FAQ</a>
+                <a href="cart.html">My Cart</a>
+            </div>
+
+            <div class="footer-column footer-contact">
+                <h3>Contact</h3>
+                <a href="mailto:theknothouse@gmail.com">theknothouse@gmail.com</a>
+                <a href="https://www.instagram.com/crochet__creations_by_amrin/"
+                   target="_blank" rel="noopener noreferrer">
+                    📷 crochet__creations_by_amrin
+                </a>
+                <p class="footer-contact-text">Ahmedabad, Gujarat, India</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                © <span id="currentYear">2026</span> The Knot House.
+                Made with ♡ and yarn.
             </p>
 
+            <div class="footer-socials">
+                <a href="https://www.instagram.com/crochet__creations_by_amrin/"
+                   target="_blank" rel="noopener noreferrer"
+                   aria-label="Instagram" title="Instagram">◎</a>
+                <a href="#" aria-label="Facebook" title="Facebook">f</a>
+                <a href="#" aria-label="Pinterest" title="Pinterest">p</a>
+            </div>
         </div>
+    </footer>
 
+    <!-- TOAST -->
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        ✨ Thank you for your feedback!
     </div>
 
-</section>
-
-
-<!-- =========================================================
-     CTA
-     ========================================================= -->
-
-<section class="cta">
-
-    <div class="cta-box">
-
-        <h2>
-            Have A Crochet Idea?
-        </h2>
-
-        <p>
-            Tell us what you are imagining.
-            From cute bags to flowers, plushies and
-            personalised creations — your idea can become
-            something beautifully handmade.
-        </p>
-
-        <a
-            href="contact.html"
-            class="cta-btn"
-        >
-            🪡 Contact Us
-        </a>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
-
-<footer>
-
-    <div class="footer-grid">
-
-
-        <div class="footer-brand">
-
-            <h2>
-                The Knot House 🧶
-            </h2>
-
-            <p>
-                Handmade crochet creations crafted
-                with patience, creativity and lots of love.
-                Every stitch tells a little story.
-            </p>
-
-        </div>
-
-
-        <div class="footer-column">
-
-            <h4>EXPLORE</h4>
-
-            <a href="index.html">Home</a>
-
-            <a href="about.html">About Us</a>
-
-            <a href="products.html">Products</a>
-
-            <a href="gallery.html">Gallery</a>
-
-        </div>
-
-
-        <div class="footer-column">
-
-            <h4>CATEGORIES</h4>
-
-            <a href="products.html?category=bags">
-                Crochet Bags
-            </a>
-
-            <a href="products.html?category=flowers">
-                Crochet Flowers
-            </a>
-
-            <a href="products.html?category=toys">
-                Soft Toys
-            </a>
-
-            <a href="products.html?category=accessories">
-                Accessories
-            </a>
-
-        </div>
-
-
-        <div class="footer-column">
-
-            <h4>HELP</h4>
-
-            <a href="contact.html">
-                Contact Us
-            </a>
-
-            <a href="feedback.html">
-                Feedback
-            </a>
-
-            <a href="faq.html">
-                FAQ
-            </a>
-
-            <a href="cart.html">
-                View Cart
-            </a>
-			<a href="https://www.instagram.com/crochet_creation_by_amrin/"
-                                  target="_blank"
-                              rel="noopener noreferrer">
-                              📷 @crochet_creation_by_amrin
-                            </a>
-
-        </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-        © 2026 The Knot House.
-        Handmade with 🧶 and 💗.
-
-    </div>
-
-</footer>
-
-
-<!-- =========================================================
-     TOAST
-     ========================================================= -->
-
-<div class="toast" id="toast">
-    ✨ Thank you for your feedback!
-</div>
-
-
-<!-- BACK TO TOP -->
-
-<button
-    class="back-top"
-    id="backTop"
-    onclick="window.scrollTo({top:0,behavior:'smooth'})"
->
-    ↑
-</button>
-
-
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
-
-<script>
-
-/* =========================================================
-   LOADER
-   ========================================================= */
-
-window.addEventListener("load", function () {
-
-    setTimeout(function () {
-
-        document.getElementById("loader").style.opacity = "0";
-
-        setTimeout(function () {
-
-            document.getElementById("loader").style.display = "none";
-
-        }, 500);
-
-    }, 500);
-
-});
-
-
-/* =========================================================
-   MOBILE MENU
-   ========================================================= */
-
-function toggleMenu() {
-
-    document
-        .getElementById("navLinks")
-        .classList.toggle("show");
-
-}
-
-
-/* CLOSE MENU AFTER CLICK */
-
-document.querySelectorAll(".nav-links a").forEach(function(link) {
-
-    link.addEventListener("click", function() {
-
-        document
-            .getElementById("navLinks")
-            .classList.remove("show");
-
-    });
-
-});
-
-
-/* =========================================================
-   CART COUNT
-   ========================================================= */
-
-function updateCartCount() {
-
-    let cart = JSON.parse(
-        localStorage.getItem("knotHouseCart")
-    ) || [];
-
-    let count = cart.reduce(function(total, item) {
-
-        return total + (item.quantity || 1);
-
-    }, 0);
-
-    document.getElementById("cartCount").textContent = count;
-
-}
-
-updateCartCount();
-
-
-/* =========================================================
-   OPEN CART
-   ========================================================= */
-
-function openCart() {
-
-    window.location.href = "cart.html";
-
-}
-
-
-/* =========================================================
-   FEEDBACK FORM
-   ========================================================= */
-
-document
-    .getElementById("feedbackForm")
-    .addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        document
-            .getElementById("successMessage")
-            .style.display = "block";
-
-        showToast(
-            "✨ Thank you for sharing your feedback!"
-        );
-
-        this.reset();
-
-        window.scrollTo({
-            top:
-                document
-                    .getElementById("successMessage")
-                    .getBoundingClientRect()
-                    .top
-                    +
-                    window.scrollY
-                    -
-                    150,
-
-            behavior: "smooth"
+    <!-- BACK TO TOP -->
+    <button class="back-top" id="backTop" type="button"
+            aria-label="Back to top"
+            onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+        ↑
+    </button>
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script>
+        /* PAGE LOADER */
+
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("loader");
+
+            setTimeout(function () {
+                loader.classList.add("hidden");
+            }, 400);
         });
 
-    });
+
+        /* MOBILE MENU */
+
+        function toggleMenu() {
+            const nav = document.getElementById("navLinks");
+            const menuButton = document.getElementById("menuBtn");
+
+            const isOpen = nav.classList.toggle("show");
+
+            menuButton.setAttribute("aria-expanded", String(isOpen));
+            menuButton.setAttribute(
+                "aria-label",
+                isOpen ? "Close navigation menu" : "Open navigation menu"
+            );
+
+            menuButton.textContent = isOpen ? "✕" : "☰";
+        }
+
+        function closeMenu() {
+            const nav = document.getElementById("navLinks");
+            const menuButton = document.getElementById("menuBtn");
+
+            nav.classList.remove("show");
+            menuButton.setAttribute("aria-expanded", "false");
+            menuButton.setAttribute("aria-label", "Open navigation menu");
+            menuButton.textContent = "☰";
+        }
+
+        document.querySelectorAll(".nav-links a").forEach(function (link) {
+            link.addEventListener("click", closeMenu);
+        });
+
+        document.addEventListener("click", function (event) {
+            const nav = document.getElementById("navLinks");
+            const menuButton = document.getElementById("menuBtn");
+
+            if (
+                nav.classList.contains("show") &&
+                !nav.contains(event.target) &&
+                !menuButton.contains(event.target)
+            ) {
+                closeMenu();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeMenu();
+            }
+        });
 
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+        /* CART COUNT */
 
-function showToast(message) {
+        function updateCartCount() {
+            let cart = [];
 
-    const toast =
-        document.getElementById("toast");
+            try {
+                cart = JSON.parse(
+                    localStorage.getItem("knotHouseCart")
+                ) || [];
 
-    toast.textContent = message;
+                if (!Array.isArray(cart)) {
+                    cart = [];
+                }
+            } catch (error) {
+                cart = [];
+            }
 
-    toast.classList.add("show");
+            const count = cart.reduce(function (total, item) {
+                const quantity = Number(item.quantity) || 1;
+                return total + quantity;
+            }, 0);
 
-    setTimeout(function() {
+            document.getElementById("cartCount").textContent = count;
+        }
 
-        toast.classList.remove("show");
+        updateCartCount();
 
-    }, 3000);
+        window.addEventListener("pageshow", updateCartCount);
 
-}
-
-
-/* =========================================================
-   BACK TO TOP
-   ========================================================= */
-
-window.addEventListener("scroll", function() {
-
-    const backTop =
-        document.getElementById("backTop");
-
-    if (window.scrollY > 500) {
-
-        backTop.classList.add("show");
-
-    } else {
-
-        backTop.classList.remove("show");
-
-    }
-
-});
+        window.addEventListener("storage", function (event) {
+            if (event.key === "knotHouseCart") {
+                updateCartCount();
+            }
+        });
 
 
-/* =========================================================
-   CLOSE MOBILE MENU WHEN CLICKING OUTSIDE
-   ========================================================= */
+        /* OPEN CART */
 
-document.addEventListener("click", function(event) {
+        function openCart() {
+            window.location.href = "cart.html";
+        }
 
-    const nav =
-        document.getElementById("navLinks");
 
-    const menu =
-        document.querySelector(".menu-btn");
+        /* COPYRIGHT YEAR */
 
-    if (
-        nav.classList.contains("show") &&
-        !nav.contains(event.target) &&
-        !menu.contains(event.target)
-    ) {
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
 
-        nav.classList.remove("show");
 
-    }
+        /* TOAST MESSAGE */
 
-});
+        let toastTimer;
 
-</script>
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+
+            toast.textContent = message;
+            toast.classList.add("show");
+
+            clearTimeout(toastTimer);
+
+            toastTimer = setTimeout(function () {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+
+        /* FEEDBACK FORM */
+
+        document.getElementById("feedbackForm").addEventListener(
+            "submit",
+            function (event) {
+                event.preventDefault();
+
+                const form = this;
+                const successMessage =
+                    document.getElementById("successMessage");
+
+                /*
+                 * This is a front-end-only confirmation.
+                 * It does not save feedback to the database.
+                 * A PHP handler is needed for permanent storage.
+                 */
+
+                successMessage.style.display = "block";
+
+                showToast("✨ Thank you for sharing your feedback!");
+
+                form.reset();
+
+                setTimeout(function () {
+                    successMessage.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }, 100);
+            }
+        );
+
+
+        /* BACK TO TOP BUTTON */
+
+        window.addEventListener("scroll", function () {
+            const backTop = document.getElementById("backTop");
+
+            if (window.scrollY > 500) {
+                backTop.classList.add("show");
+            } else {
+                backTop.classList.remove("show");
+            }
+        });
+    </script>
 
 </body>
 </html>
